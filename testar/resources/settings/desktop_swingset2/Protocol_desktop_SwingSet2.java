@@ -124,6 +124,16 @@ public class Protocol_desktop_SwingSet2 extends ClickFilterLayerProtocol { // De
 		return super.startSystem();
 
 	}
+	
+	protected void previousActions(SUT system, State state) {
+	
+		//Prepare the desired sequence with the name "prevSequence" in the "bin" directory. Change it throughout the development
+		//runPreviousSequence(system, "prevSequence");
+		clickOnWidget(system, "7",state);
+		clickOnWidget(system, "7",state);
+		clickOnWidget(system, "7",state);
+		
+	}
 
 	/**
 	 * This method is called when TESTAR requests the state of the SUT.

@@ -1214,6 +1214,7 @@ public class DefaultProtocol extends AbstractProtocol {
 					system = startSystem();
 					processListeners(system);
 					this.cv = buildCanvas();
+					previousActions(system, getState(system));
 				}
 
 				lastCPU = NativeLinker.getCPUsage(system);
@@ -1398,6 +1399,7 @@ public class DefaultProtocol extends AbstractProtocol {
 			startedSpy = true;
 			Grapher.GRAPHS_ACTIVATED = false;
 			this.cv = buildCanvas();
+			previousActions(system, getState(system));
 		}
 		//else, SUT & canvas exists (startSystem() & buildCanvas() created from runGenerate)
 
@@ -1558,6 +1560,126 @@ public class DefaultProtocol extends AbstractProtocol {
 		//If stopSystem did not really stop the system, we will do it for you ;-)
 		if (system != null)
 			system.stop();
+	}
+	
+	protected void previousActions(SUT system, State state) {
+		
+	}
+	
+	protected void clickOnWidget(SUT system, String widgetTitle, State state) {
+		for(Widget w : getTopWidgets(state)){
+			if(w.get(Tags.Title, "none").contains(widgetTitle)) {
+
+				Action action = new StdActionCompiler().leftClickAt(w);
+				executeAction(system, state, action);
+
+			}
+		}
+	}
+	
+	protected void typeOnWidget(SUT system, String widgetTitle, State state, String text) {
+		for(Widget w : getTopWidgets(state)){
+			if(w.get(Tags.Title, "none").contains(widgetTitle)) {
+
+				Action action = new StdActionCompiler().clickTypeInto(w, text);
+				executeAction(system, state, action);
+
+			}
+		}
+	}
+	
+	protected void runPreviousSequence(SUT system, String dir) {
+		boolean graphsActivated = Grapher.GRAPHS_ACTIVATED;
+		Grapher.GRAPHS_ACTIVATED = false;
+		actionCount = 1;
+		boolean success = true;
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		GZIPInputStream gis = null;
+		ObjectInputStream ois = null;;
+		try{
+			File seqFile = new File(dir);
+			fis = new FileInputStream(seqFile);
+			bis = new BufferedInputStream(fis);
+			gis = new GZIPInputStream(bis);
+			ois = new ObjectInputStream(gis);
+
+			Canvas cv = buildCanvas();
+			State state = getState(system);
+
+			double rrt = settings.get(ConfigTags.ReplayRetryTime);
+
+			while(success && mode() != Modes.Quit){
+				Taggable fragment;
+				try{
+					fragment = (Taggable) ois.readObject();
+				} catch(IOException ioe){
+					success = true;
+					break;
+				}
+
+				success = false;
+				int tries = 0;
+				double start = Util.time();
+
+				while(!success && (Util.time() - start < rrt)){
+					tries++;
+					cv.begin(); Util.clear(cv);
+					SutVisualization.visualizeState(mode, settings, markParentWidget, mouse, protocolUtil, lastPrintParentsOf, delay, cv, state, system);
+					cv.end();
+
+					if(mode() == Modes.Quit) break;
+					Action action = fragment.get(ExecutedAction, new NOP());
+					SutVisualization.visualizeSelectedAction(mode, settings, cv, state, action);
+					if(mode() == Modes.Quit) break;
+
+					double actionDuration = settings.get(ConfigTags.UseRecordedActionDurationAndWaitTimeDuringReplay) ? fragment.get(Tags.ActionDuration, 0.0) : settings.get(ConfigTags.ActionDuration);
+					double actionDelay = settings.get(ConfigTags.UseRecordedActionDurationAndWaitTimeDuringReplay) ? fragment.get(Tags.ActionDelay, 0.0) : settings.get(ConfigTags.TimeToWaitAfterAction);
+
+					try{
+
+						action.run(system, state, actionDuration);
+						success = true;
+						actionCount++;
+						LogSerialiser.log("Success!\n", LogSerialiser.LogLevel.Info);
+					} catch(ActionFailedException afe){}
+
+					Util.pause(actionDelay);
+
+					if(mode() == Modes.Quit) break;
+					state = getState(system);
+				}
+
+			}
+
+			cv.release();
+			
+		} catch(IOException ioe){
+			throw new RuntimeException("Cannot read file.", ioe);
+		} catch (ClassNotFoundException cnfe) {
+			throw new RuntimeException("Cannot read file.", cnfe);
+		} finally {
+			if (ois != null){
+				try { ois.close(); } catch (IOException e) { e.printStackTrace(); }
+			}
+			if (gis != null){
+				try { gis.close(); } catch (IOException e) { e.printStackTrace(); }
+			}
+			if (bis != null){
+				try { bis.close(); } catch (IOException e) { e.printStackTrace(); }
+			}
+			if (fis != null){
+				try { fis.close(); } catch (IOException e) { e.printStackTrace(); }
+			}		
+		}
+
+		if(success){
+			
+		} else{
+			System.out.println("Failed trying to run PreviousSequence");
+		}
+		Grapher.GRAPHS_ACTIVATED = graphsActivated;
+		
 	}
 
 }
