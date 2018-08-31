@@ -23,7 +23,7 @@ Mode = Spy
 # The SUT must be manually started and closed.
 #################################################################
 SUTConnector = COMMAND_LINE
-SUTConnectorValue = "C:\\Program Files\\Internet Explorer\\iexplore.exe" "https://www.google.com/"
+SUTConnectorValue = "C:\\Program Files\\Internet Explorer\\iexplore.exe" "testar.bitrix24.com"
 
 #################################################################
 # Sequences
@@ -41,6 +41,29 @@ SequenceLength = 100
 #################################################################
 
 SuspiciousTitles = .*[Ff]aultystring.*|SomeOtherFaultyString
+
+#################################################################
+# Oracles based on Suspicious Outputs detected by Process Listeners
+#
+# (Only available for desktop applications through COMMAND_LINE)
+#
+# Regular expression defines the suspicious outputs
+#################################################################
+
+ProcessListenerEnabled = false
+SuspiciousProcessOutput = .*[Ff]aultystring.*|SomeOtherFaultyString
+
+#################################################################
+# Process Logs
+#
+# Required ProcessListenerEnabled
+# (Only available for desktop applications through COMMAND_LINE)
+#
+# Allow TESTAR to store in its logs other possible matches found in the process
+# Use the regular expression .*.* if you want to store all the possible outputs of the process
+#################################################################
+
+ProcessLogs = .*[Ff]aultystring.*|SomeOtherFaultyString
 
 #################################################################
 # Actionfilter
