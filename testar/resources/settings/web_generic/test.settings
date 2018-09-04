@@ -23,7 +23,7 @@ Mode = Spy
 # The SUT must be manually started and closed.
 #################################################################
 SUTConnector = COMMAND_LINE
-SUTConnectorValue = "C:\\Program Files\\Internet Explorer\\iexplore.exe" "testar.bitrix24.com"
+SUTConnectorValue = "C:\\Program Files\\Mozilla Firefox\firefox.exe" "www.bitrix24.com/auth"
 
 #################################################################
 # Sequences
