@@ -129,3 +129,4 @@ StopGenerationOnFault = true
 CopyFromTo =
 VisualizeActions = false
 VisualizeSelectedAction = true
+ForceToSequenceLength = false
