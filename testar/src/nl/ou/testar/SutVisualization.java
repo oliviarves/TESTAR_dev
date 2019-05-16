@@ -225,7 +225,7 @@ public class SutVisualization {
      */
     public static int getTargetZindex(State state, Action a){
         try{
-            String targetID = a.get(Tags.TargetID);
+            String targetID = a.get(Tags.TargetConcreteID);
             Widget w;
             if (targetID != null){
                 w = getWidget(state,targetID);

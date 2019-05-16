@@ -121,6 +121,16 @@ ConcreteStateAttributes = Role,Path,Title,Enabled
 AbstractStateAttributes = Role
 
 #################################################################
+# Action identifier attributes
+#
+# Specify the Action attributes that you wish to use in constructing
+# the action hash strings. Use a comma separated list.
+# Allowed value are: TargetAbstractID,TargetConcreteID,Role,Desc
+#################################################################
+ConcreteActionAttributes = Desc,TargetConcreteID
+AbstractActionAttributes = Role,TargetAbstractID
+
+#################################################################
 # Other more advanced settings
 #################################################################
 

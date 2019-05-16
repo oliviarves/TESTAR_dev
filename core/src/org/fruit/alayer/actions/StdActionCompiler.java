@@ -1,32 +1,32 @@
 /***************************************************************************************************
-*
-* Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
-* Copyright (c) 2019 Open Universiteit - www.ou.nl
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* 1. Redistributions of source code must retain the above copyright notice,
-* this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-* notice, this list of conditions and the following disclaimer in the
-* documentation and/or other materials provided with the distribution.
-* 3. Neither the name of the copyright holder nor the names of its
-* contributors may be used to endorse or promote products derived from
-* this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************************************/
+ *
+ * Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019 Universitat Politecnica de Valencia - www.upv.es
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holder nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
 
 
 package org.fruit.alayer.actions;
@@ -69,11 +69,11 @@ public class StdActionCompiler {
 		position.obscuredByChildFeature(false); // even if any other widget is at foreground
 		return mouseMove(w,position);
 	}
-	
+
 	public Action mouseMove(Widget w, Position position){
 		return new CompoundAction.Builder().add(new MouseMove(position), 0).add(NOP, 1).build();		
 	}
-	
+
 
 	public Action leftClick(){
 		return new CompoundAction.Builder().add(LMouseDown, 0)
@@ -110,7 +110,8 @@ public class StdActionCompiler {
 		Finder wf = abstractor.apply(w);
 		Action ret = leftClickAt(new WidgetPosition(wf, Tags.Shape, relX, relY, true));
 		ret.set(Tags.Targets, Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		return ret;
 	}
 
@@ -133,7 +134,8 @@ public class StdActionCompiler {
 		Action ret = rightClickAt(new WidgetPosition(wf, Tags.Shape, relX, relY, true));
 		ret.set(Tags.Desc, "Right Click at '" + w.get(Tags.Desc, "<no description>") + "'");
 		ret.set(Tags.Targets, Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		ret.set(Tags.OriginWidget, w);
 		return ret;
 	}
@@ -144,23 +146,24 @@ public class StdActionCompiler {
 		return new CompoundAction.Builder().add(new MouseMove(position), 1)
 				.add(LMouseDown, 0).add(LMouseUp, 0).add(LMouseDown, 0).add(LMouseUp, 0).add(LMouseDown, 0).add(LMouseUp, 0).build();
 	}
-	
+
 	public Action leftTripleClickAt(double absX, double absY){
 		return leftTripleClickAt(new AbsolutePosition(absX, absY));
 	}
-	
+
 	public Action leftTripleClickAt(Widget w){
 		return leftTripleClickAt(w, 0.5, 0.5);
 	}
-	
+
 	public Action leftTripleClickAt(Widget w, double relX, double relY){
 		Finder wf = abstractor.apply(w);
 		Action ret = leftTripleClickAt(new WidgetPosition(wf, Tags.Shape, relX, relY, true));
 		ret.set(Tags.Targets,  Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		return ret;
 	}
-	
+
 
 	public Action leftDoubleClickAt(Position position){
 		Assert.notNull(position);
@@ -180,29 +183,31 @@ public class StdActionCompiler {
 		Finder wf = abstractor.apply(w);
 		Action ret = leftDoubleClickAt(new WidgetPosition(wf, Tags.Shape, relX, relY, true));
 		ret.set(Tags.Targets, Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		return ret;
 	}
 
 	public Action dropDownAt(Position position){
 		Assert.notNull(position);
-		
+
 		return new CompoundAction.Builder().add(new MouseMove(position), 1)
 				.add(LMouseDown, 0).add(LMouseUp, 0).add(NOP, 0.2).add(new KeyDown(KBKeys.VK_RIGHT),0).build();
 	}
-	
+
 	public Action dropDownAt(double absX, double absY){
 		return dropDownAt(new AbsolutePosition(absX, absY));
 	}
-	
+
 	public Action dropDownAt(Widget w, double relX, double relY){
 		Finder wf = abstractor.apply(w);
 		Action ret = dropDownAt(new WidgetPosition(wf, Tags.Shape, relX, relY, true));
 		ret.set(Tags.Targets, Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		return ret;
 	}
-	
+
 	public Action dropDownAt(Widget w){
 		return dropDownAt(w, 0.5, 0.5);
 	}
@@ -221,7 +226,7 @@ public class StdActionCompiler {
 				.add(LMouseDown, 0).add(new MouseMove(to), 1)
 				.add(LMouseUp, 0).build();		
 	}
-	
+
 	public Action slideFromTo(Position from, Position to){
 		Action action = dragFromTo(from,to);
 		action.set(Tags.Slider, new Position[]{from,to});
@@ -262,7 +267,8 @@ public class StdActionCompiler {
 			ret = clickAndAppendText(new WidgetPosition(wf, Tags.Shape, relX, relY, true), text);
 		}
 		ret.set(Tags.Targets, Util.newArrayList(wf));
-		ret.set(Tags.TargetID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetConcreteID, w.get(Tags.ConcreteID));
+		ret.set(Tags.TargetAbstractID, w.get(Tags.AbstractID));
 		return ret;
 	}
 
@@ -284,7 +290,7 @@ public class StdActionCompiler {
 		//.add(new KeyUp(KBKeys.VK_SHIFT), 1);
 		for ( int i=0; i<TEXT_REMOVE_TRIES; i++)
 			builder.add(new KeyDown(KBKeys.VK_DELETE), 1).add(new KeyUp(KBKeys.VK_DELETE), 1);
-		*/
+		 */
 		// Typing the new text:
 		builder.add(new Type(text), 1);
 		return builder.build();
@@ -305,7 +311,7 @@ public class StdActionCompiler {
 		return new CompoundAction.Builder().add(new KeyDown(key), .0)
 				.add(new KeyUp(key), 1.0).add(NOP, 1.0).build();
 	}
-	
+
 	public Action hitShortcutKey(List<KBKeys> keys) {
 		if (keys.size() == 1) // single key
 			return hitKey(keys.get(0));
@@ -317,7 +323,7 @@ public class StdActionCompiler {
 		builder.add(NOP, 1.0);
 		return builder.build();
 	}
-	
+
 	public Action killProcessByPID(long pid){ return killProcessByPID(pid, 0); }
 	public Action killProcessByName(String name){ return killProcessByName(name, 0); }
 	public Action killProcessByPID(long pid, double timeToWaitBeforeKilling){ return KillProcess.byPID(pid, timeToWaitBeforeKilling); }

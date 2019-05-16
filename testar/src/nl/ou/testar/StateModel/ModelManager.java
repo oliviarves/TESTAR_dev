@@ -73,7 +73,7 @@ public class ModelManager implements StateModelManager {
     @Override
     public void notifyNewStateReached(State newState, Set<Action> actions) {
         // check if we are dealing with a new state or an existing one
-        String abstractStateId = newState.get(Tags.AbstractIDCustom);
+        String abstractStateId = newState.get(Tags.AbstractID);
         AbstractState newAbstractState;
 
         // fetch or create an abstract state
@@ -92,7 +92,7 @@ public class ModelManager implements StateModelManager {
         }
 
         // add the concrete state id to the abstract state
-        newAbstractState.addConcreteStateId(newState.get(Tags.ConcreteIDCustom));
+        newAbstractState.addConcreteStateId(newState.get(Tags.ConcreteID));
 
         // check if an action was executed
         if (actionUnderExecution == null) {
@@ -149,11 +149,11 @@ public class ModelManager implements StateModelManager {
         // the action that is executed should always be traceable to an action on the current abstract state
         // in other words, we should be able to find the action on the current abstract state
         try {
-            actionUnderExecution = currentAbstractState.getAction(action.get(Tags.AbstractIDCustom));
+            actionUnderExecution = currentAbstractState.getAction(action.get(Tags.AbstractID));
         }
         catch (ActionNotFoundException ex) {
             System.out.println("Action not found in state model");
-            actionUnderExecution = new AbstractAction(action.get(Tags.AbstractIDCustom));
+            actionUnderExecution = new AbstractAction(action.get(Tags.AbstractID));
             currentAbstractState.addNewAction(actionUnderExecution);
         }
         concreteActionUnderExecution = ConcreteActionFactory.createConcreteAction(action, actionUnderExecution);
@@ -180,7 +180,7 @@ public class ModelManager implements StateModelManager {
             String abstractIdCustom = actionSelector.selectAction(currentAbstractState, abstractStateModel).getActionId();
             System.out.println("Finding action with abstractIdCustom : " + abstractIdCustom);
             for(Action action : actions) {
-                if (action.get(Tags.AbstractIDCustom).equals(abstractIdCustom)) {
+                if (action.get(Tags.AbstractID).equals(abstractIdCustom)) {
                     return action;
                 }
             }

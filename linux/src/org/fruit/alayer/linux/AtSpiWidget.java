@@ -285,8 +285,8 @@ public class AtSpiWidget implements Widget, Serializable {
     @Override
     public String getRepresentation(String tab) {
 
-        return (tab + "WIDGET = CONCRETE_" + this.get(Tags.ConcreteID) + " ABSTRACT(R)_" + this.get(Tags.Abstract_R_ID) +
-                " ABSTRACT(R,T)_" + this.get(Tags.Abstract_R_T_ID) + " ABSTRACT(R,T,P)_" + this.get(Tags.Abstract_R_T_P_ID) + "\n") +
+        return (tab + "WIDGET = CONCRETE_" + this.get(Tags.ConcreteID) + " ABSTRACT(R)_" + this.get(Tags.Filter_R) +
+                " ABSTRACT(R,T)_" + this.get(Tags.Filter_R_T) + " ABSTRACT(R,T,P)_" + this.get(Tags.Filter_R_T_P) + "\n") +
                 getPropertiesRepresentation(tab);
 
     }

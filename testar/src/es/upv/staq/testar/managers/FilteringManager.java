@@ -156,9 +156,9 @@ public class FilteringManager
       writer.write("<" + XML_TAG_UI_FILTER_ROOT + " version=\"" + XML_UI_FILTER_VERSION + "\">\n");
       // coding types
       writer.write("\t<coding_types>\n");
-      writer.write("\t\t<coding type=\"" + CodingManager.ABSTRACT_R_ID + "\" desc=\"ROLE property\"/>\n");
-      writer.write("\t\t<coding type=\"" + CodingManager.ABSTRACT_R_T_ID + "\" desc=\"ROLE and TITLE properties\"/>\n");
-      writer.write("\t\t<coding type=\"" + CodingManager.ABSTRACT_R_T_P_ID + "\" desc=\"ROLE, TITLE and PATH properties\"/>\n");
+      writer.write("\t\t<coding type=\"" + CodingManager.FILTER_R + "\" desc=\"ROLE property\"/>\n");
+      writer.write("\t\t<coding type=\"" + CodingManager.FILTER_R_T + "\" desc=\"ROLE and TITLE properties\"/>\n");
+      writer.write("\t\t<coding type=\"" + CodingManager.FILTER_R_T_P + "\" desc=\"ROLE, TITLE and PATH properties\"/>\n");
       writer.write("\t</coding_types>\n");
       // filterING types
       writer.write("\t<" + XML_TAG_UI_FILTERING_TYPES + ">\n");
@@ -273,14 +273,14 @@ public class FilteringManager
         new Integer(widgetFilter)); // filter code
     String widgetID = null;
     switch (idType) {
-      case CodingManager.ABSTRACT_R_ID:
-        widgetID = w.get(Tags.Abstract_R_ID);
+      case CodingManager.FILTER_R:
+        widgetID = w.get(Tags.Filter_R);
         break;
-      case CodingManager.ABSTRACT_R_T_ID:
-        widgetID = w.get(Tags.Abstract_R_T_ID);
+      case CodingManager.FILTER_R_T:
+        widgetID = w.get(Tags.Filter_R_T);
         break;
-      case CodingManager.ABSTRACT_R_T_P_ID:
-        widgetID = w.get(Tags.Abstract_R_T_P_ID);
+      case CodingManager.FILTER_R_T_P:
+        widgetID = w.get(Tags.Filter_R_T_P);
         break;
     }
     WidgetInfo winfo = widgetsFilterList.get(widgetID);
@@ -352,7 +352,7 @@ public class FilteringManager
   private void manageWhiteTabuLists (Widget w, boolean whiteTabuMode, boolean preciseCoding)
   {
     filterLists(w, whiteTabuMode ? DataManager.WIDGET_ACTION_WHITE_FILTER : DataManager.WIDGET_ACTION_TABU_FILTER,
-        preciseCoding ? CodingManager.ABSTRACT_R_T_P_ID : CodingManager.ABSTRACT_R_T_ID);
+        preciseCoding ? CodingManager.FILTER_R_T_P : CodingManager.FILTER_R_T);
     saveFilters();
   }
 
@@ -373,35 +373,35 @@ public class FilteringManager
     String s = (String) JOptionPane.showInputDialog(new JFrame(), "Input values:", "Widget input value type",
         JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
     if (DataManager.DATA_TYPES.containsKey(s)) {
-      filterLists(cursorWidget, DataManager.DATA_TYPES.get(s), preciseCoding ? CodingManager.ABSTRACT_R_T_P_ID : CodingManager.ABSTRACT_R_T_ID);
+      filterLists(cursorWidget, DataManager.DATA_TYPES.get(s), preciseCoding ? CodingManager.FILTER_R_T_P : CodingManager.FILTER_R_T);
       saveFilters();
     }
   }
 
   public boolean blackListed (Widget w)
   {
-    WidgetInfo wi = widgetsFilterList.get(w.get(Tags.Abstract_R_T_P_ID));
+    WidgetInfo wi = widgetsFilterList.get(w.get(Tags.Filter_R_T_P));
     if (wi == null) {
-      wi = widgetsFilterList.get(w.get(Tags.Abstract_R_T_ID));
+      wi = widgetsFilterList.get(w.get(Tags.Filter_R_T));
     }
     return (wi != null && wi.filterCode.intValue() == DataManager.WIDGET_ACTION_TABU_FILTER);
   }
 
   public boolean whiteListed (Widget w)
   {
-    WidgetInfo wi = widgetsFilterList.get(w.get(Tags.Abstract_R_T_P_ID));
+    WidgetInfo wi = widgetsFilterList.get(w.get(Tags.Filter_R_T_P));
     if (wi == null) {
-      wi = widgetsFilterList.get(w.get(Tags.Abstract_R_T_ID));
+      wi = widgetsFilterList.get(w.get(Tags.Filter_R_T));
     }
     return (wi != null && wi.filterCode.intValue() == DataManager.WIDGET_ACTION_WHITE_FILTER);
   }
 
   public String getRandomText (Widget w)
   {
-    String wid = w.get(Tags.Abstract_R_T_P_ID);
+    String wid = w.get(Tags.Filter_R_T_P);
     ;
     if (!widgetsFilterList.containsKey(wid)) {
-      wid = w.get(Tags.Abstract_R_T_ID);
+      wid = w.get(Tags.Filter_R_T);
     }
     if (widgetsFilterList.containsKey(wid)) {
       int widgetFilter = widgetsFilterList.get(wid).filterCode;
@@ -423,12 +423,12 @@ public class FilteringManager
   {
     String wid;
     for (Widget w : state) {
-      wid = w.get(Tags.Abstract_R_T_P_ID);
+      wid = w.get(Tags.Filter_R_T_P);
       if (widgetsFilterList.containsKey(wid)) {
         visualizeActions(canvas, state, w, wid, true);
       }
       else {
-        wid = w.get(Tags.Abstract_R_T_ID);
+        wid = w.get(Tags.Filter_R_T);
         if (widgetsFilterList.containsKey(wid)) {
           visualizeActions(canvas, state, w, wid, false);
         }

@@ -19,7 +19,7 @@ public abstract class ConcreteStateFactory {
      * @return the new concrete state
      */
     public static ConcreteState createConcreteState(State newState, Set<Tag<?>> tags, AbstractState abstractState) {
-        String concreteStateId = newState.get(Tags.ConcreteIDCustom);
+        String concreteStateId = newState.get(Tags.ConcreteID);
         ConcreteState concreteState = new ConcreteState(concreteStateId, tags, abstractState);
 
         // next we want to add all the attributes contained in the state, and then do the same thing for the child widgets
@@ -61,7 +61,7 @@ public abstract class ConcreteStateFactory {
         // we loop through the testar widget's children to copy their attributes into new widgets
         for (int i = 0; i < testarWidget.childCount(); i++) {
             org.fruit.alayer.Widget testarChildWidget = testarWidget.child(i);
-            String widgetId = testarChildWidget.get(Tags.ConcreteIDCustom);
+            String widgetId = testarChildWidget.get(Tags.ConcreteID);
             Widget newStateModelWidget = new Widget(widgetId);
             newStateModelWidget.setRootWidget(rootWidget);
             // copy the attribute info

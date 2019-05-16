@@ -85,15 +85,15 @@ class OrientDBRepository implements GraphDBRepository {
    public void addAction(final Action action, final String toStateID) {
 
       LOGGER.info("Store Action {} ({}) from {} to {}",
-         action.get(Tags.ConcreteID), action.get(Tags.Desc, ""), action.get(Tags.TargetID), toStateID);
+         action.get(Tags.ConcreteID), action.get(Tags.Desc, ""), action.get(Tags.TargetConcreteID), toStateID);
 
       long tStart = System.currentTimeMillis();
 
       OrientGraph graph = graphFactory.getTx();
       try {
-         Vertex vertexFrom = getWidgetVertex(action.get(Tags.TargetID), graph);
+         Vertex vertexFrom = getWidgetVertex(action.get(Tags.TargetConcreteID), graph);
          if (vertexFrom == null) {
-            throw new GraphDBException("Widget not found " + action.get(Tags.TargetID));
+            throw new GraphDBException("Widget not found " + action.get(Tags.TargetConcreteID));
          }
          Vertex vertexTo = getStateVertex(toStateID, graph);
          if (vertexTo == null) {
@@ -240,7 +240,7 @@ class OrientDBRepository implements GraphDBRepository {
          vertex.setProperty("IsInitial",false);
       }
 
-      Vertex abstractState = createVertex("AbsState","AbsRoleID",state.get(Tags.Abstract_R_ID),graph);
+      Vertex abstractState = createVertex("AbsState","AbsRoleID",state.get(Tags.AbstractID),graph);
 
       Edge isA = graph.addEdge(null,vertex,abstractState,"isA");
    }
@@ -406,10 +406,10 @@ class OrientDBRepository implements GraphDBRepository {
     * @return Vertext for the abstract Role/Title/Path combination.
     */
    private Vertex getAbstractRoleWidget(Graph g, Widget widget) {
-      String abstractId = widget.get(Tags.Abstract_R_ID, "");
+      String abstractId = widget.get(Tags.AbstractID, "");
       Vertex abstractRole = createVertex("AbsRole",
          "Abstract_R_ID",
-         widget.get(Tags.Abstract_R_ID),g);
+         widget.get(Tags.AbstractID),g);
 
       abstractRole.setProperty("absid", abstractId);
       abstractRole.setProperty("Role", widget.get(Tags.Role, Role.from("UNKNOWN")).toString());
@@ -424,7 +424,7 @@ class OrientDBRepository implements GraphDBRepository {
     * @return Vertext for the abstract Role/Title/Path combination.
     */
    private Vertex getAbstractRoleTitleWidget(Graph g, Widget widget) {
-      String absID = widget.get(Tags.Abstract_R_T_ID, "");
+      String absID = widget.get(Tags.AbstractID, "");
       Vertex abstractRole;
       try {
          Iterable<Vertex> vertices = g.getVertices("AbsRoleTitle.absid", absID);
@@ -447,7 +447,7 @@ class OrientDBRepository implements GraphDBRepository {
     * @return Vertext for the abstract Role/Title/Path combination.
     */
    private Vertex getAbstractRoleTitlePathWidget(Graph g, Widget widget) {
-      String absID = widget.get(Tags.Abstract_R_T_P_ID, "");
+      String absID = widget.get(Tags.AbstractID, "");
       Vertex abstractRole;
       try {
          Iterable<Vertex> vertices = g.getVertices("AbsRoleTitlePath.absid", absID);

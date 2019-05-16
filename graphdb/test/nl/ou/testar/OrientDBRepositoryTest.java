@@ -75,7 +75,7 @@ public class OrientDBRepositoryTest {
 
       StdState state = new StdState();
       state.set(Tags.ConcreteID, "0xCAFE");
-      state.set(Tags.Abstract_R_ID,"demo");
+      state.set(Tags.AbstractID,"demo");
 
       sut.addState(state,false);
 
@@ -109,13 +109,11 @@ public class OrientDBRepositoryTest {
       Widget widget = new StdWidget();
       widget.set(Tags.ConcreteID, "0xDADA");
       widget.set(Tags.Desc, "Demo");
-      widget.set(Tags.Abstract_R_ID, "TestRole");
-      widget.set(Tags.Abstract_R_T_ID, "RolAndTitle");
-      widget.set(Tags.Abstract_R_T_P_ID, "RoleTitleAndPath");
+      widget.set(Tags.AbstractID, "TestRole");
 
       State from = new StdState();
       from.set(Tags.ConcreteID, "0xDEAD");
-      from.set(Tags.Abstract_R_ID,"demo");
+      from.set(Tags.AbstractID,"demo");
 
       sut.addState(from,false);
       sut.addWidget("0xDEAD", widget);
@@ -134,21 +132,19 @@ public class OrientDBRepositoryTest {
 
       Action action = new NOP();
       action.set(Tags.ConcreteID, "0xDAAD");
-      action.set(Tags.TargetID, "0xDADA");
+      action.set(Tags.TargetConcreteID, "0xDADA");
       action.set(Tags.AbstractID, "demo");
       action.set(Tags.Desc, "test");
       State from = new StdState();
       from.set(Tags.ConcreteID, "0xDEAD");
-      from.set(Tags.Abstract_R_ID,"demo");
+      from.set(Tags.AbstractID,"demo");
       State to = new StdState();
       to.set(Tags.ConcreteID, "0xCAFE");
-      to.set(Tags.Abstract_R_ID,"demo");
+      to.set(Tags.AbstractID,"demo");
 
       Widget widget = new StdWidget();
       widget.set(Tags.ConcreteID, "0xDADA");
-      widget.set(Tags.Abstract_R_ID, "TestRole");
-      widget.set(Tags.Abstract_R_T_ID, "RolAndTitle");
-      widget.set(Tags.Abstract_R_T_P_ID, "RoleTitleAndPath");
+      widget.set(Tags.AbstractID, "TestRole");
       widget.set(Tags.Role, Role.from("test"));
       widget.set(Tags.Title, "dummy");
       widget.set(Tags.Desc, "Demo");
@@ -166,14 +162,14 @@ public class OrientDBRepositoryTest {
 
       Action action = new NOP();
       action.set(Tags.ConcreteID, "0xDAAD");
-      action.set(Tags.TargetID, "0xDADA");
+      action.set(Tags.TargetConcreteID, "0xDADA");
       action.set(Tags.Desc, "test");
       State from = new StdState();
       from.set(Tags.ConcreteID, "0xDEAD");
-      from.set(Tags.Abstract_R_ID,"demo");
+      from.set(Tags.AbstractID,"demo");
       State to = new StdState();
       to.set(Tags.ConcreteID, "0xCAFE");
-      to.set(Tags.Abstract_R_ID,"demo");
+      to.set(Tags.AbstractID,"demo");
 
       sut.addState(from,false);
       sut.addState(to,false);
@@ -190,17 +186,15 @@ public class OrientDBRepositoryTest {
 
       Action action = new NOP();
       action.set(Tags.ConcreteID, "0xDAAD");
-      action.set(Tags.TargetID, "0xDADA");
+      action.set(Tags.TargetConcreteID, "0xDADA");
       action.set(Tags.Desc, "test");
       State from = new StdState();
       from.set(Tags.ConcreteID, "0xDEAD");
-      from.set(Tags.Abstract_R_ID,"demo");
+      from.set(Tags.AbstractID,"demo");
 
       Widget widget = new StdWidget();
       widget.set(Tags.ConcreteID, "0xDADA");
-      widget.set(Tags.Abstract_R_ID,"TestRole");
-      widget.set(Tags.Abstract_R_T_ID,"RolAndTitle");
-      widget.set(Tags.Abstract_R_T_P_ID,"RoleTitleAndPath");
+      widget.set(Tags.AbstractID,"TestRole");
       widget.set(Tags.Desc, "Demo");
 
       sut.addState(from,false);
@@ -221,15 +215,15 @@ public class OrientDBRepositoryTest {
 
       Action action = new NOP();
       action.set(Tags.ConcreteID, "0xDAAD");
-      action.set(Tags.TargetID, "0xDADA");
+      action.set(Tags.TargetConcreteID, "0xDADA");
       action.set(Tags.AbstractID, "demo");
       action.set(Tags.Desc, "test");
       State from = new StdState();
       from.set(Tags.ConcreteID, "0xDEAD");
-      from.set(Tags.Abstract_R_ID,"demo");
+      from.set(Tags.AbstractID,"demo");
       State to = new StdState();
       to.set(Tags.ConcreteID, "0xCAFE");
-      to.set(Tags.Abstract_R_ID,"demo");
+      to.set(Tags.AbstractID,"demo");
 
       sut.addState(from,false);
       sut.addState(to,false);
@@ -244,11 +238,11 @@ public class OrientDBRepositoryTest {
          Action action = new NOP();
          action.set(Tags.Desc, "test");
          action.set(Tags.ConcreteID, "0xDAAD");
-         action.set(Tags.TargetID, "0xCAFE");
+         action.set(Tags.TargetConcreteID, "0xCAFE");
          action.set(Tags.AbstractID,"demo");
          State to = new StdState();
          to.set(Tags.ConcreteID, "0xCAFE");
-         to.set(Tags.Abstract_R_ID,"demo");
+         to.set(Tags.AbstractID,"demo");
 
          sut.addState(to,false);
 
@@ -282,10 +276,10 @@ public class OrientDBRepositoryTest {
          action.set(Tags.Desc, "test");
          action.set(Tags.ConcreteID, "0xDAAD");
          action.set(Tags.AbstractID,"demo");
-         action.set(Tags.TargetID, "0xCAFE");
+         action.set(Tags.TargetConcreteID, "0xCAFE");
          State from = new StdState();
          from.set(Tags.ConcreteID, "0xCAFE");
-         from.set(Tags.Abstract_R_ID,"demo");
+         from.set(Tags.AbstractID,"demo");
 
          sut.addState(from,false);
 

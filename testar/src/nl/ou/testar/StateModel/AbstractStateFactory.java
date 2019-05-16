@@ -16,7 +16,7 @@ public abstract class AbstractStateFactory {
      * @return the new abstract state
      */
     public static AbstractState createAbstractState(State newState, Set<Action> actions) {
-        String abstractStateId = newState.get(Tags.AbstractIDCustom);
+        String abstractStateId = newState.get(Tags.AbstractID);
         return new AbstractState(abstractStateId, ActionHelper.convertActionsToAbstractActions(actions));
     }
 

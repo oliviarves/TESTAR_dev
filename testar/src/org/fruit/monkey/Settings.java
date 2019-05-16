@@ -403,6 +403,16 @@ public class Settings extends TaggableBase implements Serializable {
 			        +"AbstractStateAttributes =" + Util.lineSep()
 					+"\n"
 					+"#################################################################\n"
+					+"# Action identifier attributes\n"
+					+"#\n"
+					+"# Specify the Action attributes that you wish to use in constructing\n"
+					+"# the action hash strings. Use a comma separated list.\n"
+					+"# Allowed value are: TargetAbstractID,TargetConcreteID,Role,Desc\n"
+                    +"#################################################################\n"
+			        +"ConcreteActionAttributes =" + Util.lineSep()
+			        +"AbstractActionAttributes =" + Util.lineSep()
+					+"\n"
+					+"#################################################################\n"
 					+"# Other more advanced settings\n"
 					+"#################################################################\n");
 

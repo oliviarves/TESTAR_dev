@@ -1,31 +1,32 @@
 /***************************************************************************************************
-*
-* Copyright (c) 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* 1. Redistributions of source code must retain the above copyright notice,
-* this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-* notice, this list of conditions and the following disclaimer in the
-* documentation and/or other materials provided with the distribution.
-* 3. Neither the name of the copyright holder nor the names of its
-* contributors may be used to endorse or promote products derived from
-* this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************************************/
+ *
+ * Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019 Universitat Politecnica de Valencia - www.upv.es
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holder nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
 
 
 package es.upv.staq.testar;
@@ -45,66 +46,68 @@ import org.fruit.alayer.actions.ActionRoles;
 
 /**
  * Core coding manager.
- * 
- * @author Urko Rueda Molina (alias: urueda)
  *
  */
 public class CodingManager {
 
+	private CodingManager() {}
+
 	public static final int ID_LENTGH = 24; // 2 (prefixes) + 7 (MAX_RADIX) + 5 (max expected text length) + 10 (CRC32)
-	
+
+	// Identifier used by Widgets (included States) and Actions
 	public static final String CONCRETE_ID = "ConcreteID";
-	public static final String CONCRETE_ID_CUSTOM = "ConcreteIDCustom";
-	// actions abstraction
 	public static final String ABSTRACT_ID = "AbstractID";
-	public static final String ABSTRACT_ID_CUSTOM = "AbstractIDCustom";
-	// widgets abstraction
-	public static final String ABSTRACT_R_ID = "Abs(R)ID"; // ROLE
-	public static final String ABSTRACT_R_T_ID = "Abs(R,T)ID"; // ROLE, TITLE
-	public static final String ABSTRACT_R_T_P_ID = "Abs(R,T,P)ID"; // ROLE, TITLE, PATH
+
+	//Different identifiers used to Filter widgets into the Filter Protocol
+	public static final String FILTER_R = "Filter_R";
+	public static final String FILTER_R_T = "Filter_R_T";
+	public static final String FILTER_R_T_P = "Filter_R_T_P";
+
+	//Widgets properties used to Filter widgets
+	private static final Tag<?>[] TAGS_FILTER_R = new Tag<?>[]{Tags.Role};
+	private static final Tag<?>[] TAGS_FILTER_R_T = new Tag<?>[]{Tags.Role,Tags.Title};
+	private static final Tag<?>[] TAGS_FILTER_R_T_P = new Tag<?>[]{Tags.Role,Tags.Title,Tags.Path};
+
+	//Prefix identifiers used to construct the Filter Widget
+	private static final String PREFIX_FILTER_R = "R";	
+	private static final String PREFIX_FILTER_R_T = "T";	
+	private static final String PREFIX_FILTER_R_T_P = "P";
 
 	public static final String ID_PREFIX_CONCRETE = "C";
-	public static final String ID_PREFIX_ABSTRACT_R = "R";
-	public static final String ID_PREFIX_ABSTRACT_R_T = "T";
-	public static final String ID_PREFIX_ABSTRACT_R_T_P = "P";
 	public static final String ID_PREFIX_ABSTRACT = "A";
-	public static final String ID_PREFIX_CONCRETE_CUSTOM = "CC";
-	public static final String ID_PREFIX_ABSTRACT_CUSTOM = "AC";
-	
+
 	public static final String ID_PREFIX_STATE = "S";
 	public static final String ID_PREFIX_WIDGET = "W";
 	public static final String ID_PREFIX_ACTION = "A";
-	
-	private static final Tag<?>[] TAGS_CONCRETE_ID = new Tag<?>[]{Tags.Role,Tags.Title,/*Tags.Shape,*/Tags.Enabled, Tags.Path};
-	private static final Tag<?>[] TAGS_ABSTRACT_R_ID = new Tag<?>[]{Tags.Role};
-	private static final Tag<?>[] TAGS_ABSTRACT_R_T_ID = new Tag<?>[]{Tags.Role,Tags.Title};
-	private static final Tag<?>[] TAGS_ABSTRACT_R_T_P_ID = new Tag<?>[]{Tags.Role,Tags.Title,Tags.Path};
 
-	public static final Role[] ROLES_ABSTRACT_ACTION = new Role[]{ // discard parameters
-		/// ActionRoles.MouseMove, 
-		ActionRoles.Type,
-		ActionRoles.KeyDown,
-		ActionRoles.KeyUp
-	};
+	private static final Tag<?>[] DEFAULT_TAGS_CONCRETE_ID = new Tag<?>[]{Tags.Role,Tags.Title,Tags.Enabled, Tags.Path};
+	private static final Tag<?>[] DEFAULT_TAGS_ABSTRACT_ID = new Tag<?>[]{Tags.Role};
 
-	// two arrays to hold the tags that will be used in constructing the concrete and abstract state id's
-	private static Tag<?>[] customTagsForConcreteId = new Tag<?>[]{};
-	private static Tag<?>[] customTagsForAbstractId = new Tag<?>[]{};
+	private static final Tag<?>[] DEFAULT_TAGS_ACTION_CONCRETE_ID = new Tag<?>[]{Tags.TargetConcreteID,Tags.Desc};
+	private static final Tag<?>[] DEFAULT_TAGS_ACTION_ABSTRACT_ID = new Tag<?>[]{Tags.TargetAbstractID,Tags.Role};
 
-    /**
-     * Set the array of tags that should be used in constructing the concrete state id's.
-     *
-     * @param tags array
-     */
+	// two arrays to hold the tags that will be used in constructing the concrete and abstract for Widgets and State id's
+	private static Tag<?>[] customTagsForConcreteId = DEFAULT_TAGS_CONCRETE_ID;
+	private static Tag<?>[] customTagsForAbstractId = DEFAULT_TAGS_ABSTRACT_ID;
+
+	// two arrays to hold the tags that will be used in constructing the concrete and abstract for Actions id's
+	private static Tag<?>[] customTagsForActionConcreteId = DEFAULT_TAGS_ACTION_CONCRETE_ID;
+	private static Tag<?>[] customTagsForActionAbstractId = DEFAULT_TAGS_ACTION_ABSTRACT_ID;
+
+	/**
+	 * Set the array of tags that should be used in constructing the concrete state id's.
+	 *
+	 * @param tags array
+	 */
 	public static synchronized void setCustomTagsForConcreteId(Tag<?>[] tags) {
 		customTagsForConcreteId = tags;
 	}
 
-    /**
-     * Set the array of tags that should be used in constructing the abstract state id's.
-     *
-     * @param tags
-     */
+	/**
+	 * Set the array of tags that should be used in constructing the abstract state id's.
+	 *
+	 * @param tags
+	 */
 	public static synchronized void setCustomTagsForAbstractId(Tag<?>[] tags) {
 		customTagsForAbstractId = tags;
 	}
@@ -117,8 +120,26 @@ public class CodingManager {
 		return customTagsForAbstractId;
 	}
 
+	/**
+	 * Set the array of tags that should be used in constructing the concrete Action id's.
+	 *
+	 * @param tags array
+	 */
+	public static synchronized void setCustomTagsForActionConcreteId(Tag<?>[] tags) {
+		customTagsForActionConcreteId = tags;
+	}
+
+	/**
+	 * Set the array of tags that should be used in constructing the abstract Action id's.
+	 *
+	 * @param tags
+	 */
+	public static synchronized void setCustomTagsForActionAbstractId(Tag<?>[] tags) {
+		customTagsForActionAbstractId = tags;
+	}
+
 	// this map holds the state tags that should be provided to the coding manager
-    // for use in constructing concrete and abstract state id's
+	// for use in constructing concrete and abstract state id's
 	public static HashMap<String, Tag<?>> allowedStateTags = new HashMap<String, Tag<?>>() {
 		{
 			put("Role", Tags.Role);
@@ -127,11 +148,22 @@ public class CodingManager {
 			put("Enabled", Tags.Enabled);
 		}
 	};
-	
+
+	// this map holds the Action tags that should be provided to the coding manager
+	// for use in constructing concrete and abstract Action id's
+	public static HashMap<String, Tag<?>> allowedActionsTags = new HashMap<String, Tag<?>>() {
+		{
+			put("TargetAbstractID", Tags.TargetAbstractID);
+			put("TargetConcreteID", Tags.TargetConcreteID);
+			put("Desc", Tags.Desc);
+			put("Role", Tags.Role);
+		}
+	};
+
 	// ###########################################
 	//  Widgets/States and Actions IDs management
 	// ###########################################
-	
+
 	/**
 	 * Builds IDs for a widget or state.
 	 * @param widget A widget or a State (widget-tree, or widget with children)
@@ -146,39 +178,36 @@ public class CodingManager {
 	 * An identifier (alphanumeric) for a widget is calculated based on
 	 * the concatenation of a set of accessibility properties (e.g. ROLE, TITLE, ENABLED and PATH).
 	 * An example for an enabled "ok" button could be: Buttonoktrue0,0,1 ("0,0,1" being the path in the widget-tree).
- 	 *
+	 *
 	 */
 	public static synchronized void buildIDs(Widget widget){
 		if (widget.parent() != null){
-			widget.set(Tags.ConcreteID, ID_PREFIX_WIDGET + ID_PREFIX_CONCRETE + CodingManager.codify(widget, false, CodingManager.TAGS_CONCRETE_ID));
-			widget.set(Tags.Abstract_R_ID, ID_PREFIX_WIDGET + ID_PREFIX_ABSTRACT_R + CodingManager.codify(widget, false, CodingManager.TAGS_ABSTRACT_R_ID));
-			widget.set(Tags.Abstract_R_T_ID, ID_PREFIX_WIDGET + ID_PREFIX_ABSTRACT_R_T + CodingManager.codify(widget, false, CodingManager.TAGS_ABSTRACT_R_T_ID));
-			widget.set(Tags.Abstract_R_T_P_ID, ID_PREFIX_WIDGET + ID_PREFIX_ABSTRACT_R_T_P + CodingManager.codify(widget, false, CodingManager.TAGS_ABSTRACT_R_T_P_ID));
-			widget.set(Tags.ConcreteIDCustom, ID_PREFIX_WIDGET + ID_PREFIX_CONCRETE_CUSTOM + CodingManager.codify(widget, false, customTagsForConcreteId));
-			widget.set(Tags.AbstractIDCustom, ID_PREFIX_WIDGET + ID_PREFIX_ABSTRACT_CUSTOM + CodingManager.codify(widget, false, customTagsForAbstractId));
+			widget.set(Tags.ConcreteID, ID_PREFIX_WIDGET + ID_PREFIX_CONCRETE + CodingManager.codify(widget, false, customTagsForConcreteId));
+			widget.set(Tags.AbstractID, ID_PREFIX_WIDGET + ID_PREFIX_ABSTRACT + CodingManager.codify(widget, false, customTagsForAbstractId));
+			widget.set(Tags.Filter_R, ID_PREFIX_WIDGET + PREFIX_FILTER_R + CodingManager.codify(widget, false, CodingManager.TAGS_FILTER_R));
+			widget.set(Tags.Filter_R_T, ID_PREFIX_WIDGET + PREFIX_FILTER_R_T + CodingManager.codify(widget, false, CodingManager.TAGS_FILTER_R_T));
+			widget.set(Tags.Filter_R_T_P, ID_PREFIX_WIDGET + PREFIX_FILTER_R_T_P + CodingManager.codify(widget, false, CodingManager.TAGS_FILTER_R_T_P));
 		} else if (widget instanceof State) { // UI root
-			String cid, a_R_id, a_R_T_id, a_R_T_P_id, concreteIdCustom, abstractIdCustom;
-			cid = a_R_id = a_R_T_id = a_R_T_P_id = concreteIdCustom = abstractIdCustom = "";
+			String cid, aid, filter_R, filter_R_T, filter_R_T_P;
+			cid = aid = filter_R = filter_R_T = filter_R_T_P = "";
 			for (Widget w : (State) widget){
 				if (w != widget){
 					buildIDs(w);
 					cid += w.get(Tags.ConcreteID);
-					a_R_id += w.get(Tags.Abstract_R_ID);
-					a_R_T_id += w.get(Tags.Abstract_R_T_ID);
-					a_R_T_P_id += w.get(Tags.Abstract_R_T_P_ID);
-					concreteIdCustom += w.get(Tags.ConcreteIDCustom);
-					abstractIdCustom += w.get(Tags.AbstractIDCustom);
+					aid += w.get(Tags.AbstractID);
+					filter_R += w.get(Tags.Filter_R);
+					filter_R_T += w.get(Tags.Filter_R_T);
+					filter_R_T_P += w.get(Tags.Filter_R_T_P);
 				}
 			}
 			widget.set(Tags.ConcreteID, ID_PREFIX_STATE + ID_PREFIX_CONCRETE + CodingManager.toID(cid));
-			widget.set(Tags.Abstract_R_ID, ID_PREFIX_STATE + ID_PREFIX_ABSTRACT_R + CodingManager.toID(a_R_id));
-			widget.set(Tags.Abstract_R_T_ID, ID_PREFIX_STATE + ID_PREFIX_ABSTRACT_R_T + CodingManager.toID(a_R_T_id));
-			widget.set(Tags.Abstract_R_T_P_ID, ID_PREFIX_STATE + ID_PREFIX_ABSTRACT_R_T_P + CodingManager.toID(a_R_T_P_id));
-			widget.set(Tags.ConcreteIDCustom, ID_PREFIX_STATE + ID_PREFIX_CONCRETE_CUSTOM + CodingManager.toID(concreteIdCustom));
-			widget.set(Tags.AbstractIDCustom, ID_PREFIX_STATE + ID_PREFIX_ABSTRACT_CUSTOM + CodingManager.toID(abstractIdCustom));
+			widget.set(Tags.AbstractID, ID_PREFIX_STATE + ID_PREFIX_ABSTRACT + CodingManager.toID(aid));
+			widget.set(Tags.Filter_R, ID_PREFIX_STATE + PREFIX_FILTER_R + CodingManager.toID(filter_R));
+			widget.set(Tags.Filter_R_T, ID_PREFIX_STATE + PREFIX_FILTER_R_T + CodingManager.toID(filter_R_T));
+			widget.set(Tags.Filter_R_T_P, ID_PREFIX_STATE + PREFIX_FILTER_R_T_P + CodingManager.toID(filter_R_T_P));
 		}	
 	}
-	
+
 	/**
 	 * Builds IDs (abstract, concrete) for a set of actions.
 	 * @param state Current State of the SUT
@@ -188,114 +217,64 @@ public class CodingManager {
 		for (Action a : actions)
 			CodingManager.buildIDs(state,a);
 	}
-	
+
 	/**
 	 * Builds IDs (abstract, concrete, precise) for an action.
 	 * @param action An action.
 	 */
-	public static synchronized void buildIDs(State state, Action action){		
+	public static synchronized void buildIDs(State state, Action action){
 		action.set(Tags.ConcreteID, ID_PREFIX_ACTION + ID_PREFIX_CONCRETE +
-				   CodingManager.codify(state.get(Tags.ConcreteID), action));
-		action.set(Tags.ConcreteIDCustom, ID_PREFIX_ACTION + ID_PREFIX_CONCRETE_CUSTOM +
-					CodingManager.codify(state.get(Tags.ConcreteIDCustom), action));
+				CodingManager.codify(state.get(Tags.ConcreteID), action, customTagsForActionConcreteId));
+
 		action.set(Tags.AbstractID, ID_PREFIX_ACTION + ID_PREFIX_ABSTRACT +
-				   CodingManager.codify(state.get(Tags.ConcreteID), action, ROLES_ABSTRACT_ACTION));
-		action.set(Tags.AbstractIDCustom, ID_PREFIX_ACTION + ID_PREFIX_ABSTRACT_CUSTOM +
-					CodingManager.codify(state.get(Tags.AbstractIDCustom), action, ROLES_ABSTRACT_ACTION));
+				CodingManager.codify(state.get(Tags.AbstractID), action, customTagsForActionAbstractId));
 	}
-	
+
 	// ###############
 	//  STATES CODING
 	// ###############
-	
+
 	private static String codify(Widget state, boolean codifyContext, Tag<?>... tags){
 		return toID(getWidgetString(state,codifyContext,tags));
 	}
-	
+
 	private static String getWidgetString(Widget widget, boolean codifyContext, Tag<?>... tags){
 		String ws = getTaggedString(widget,tags);
 		if (codifyContext)
 			ws += "#" + getWidgetContextString(widget);
 		return ws;
 	}
-	
+
 	private static String getTaggedString(Widget leaf, Tag<?>... tags){
 		StringBuilder sb = new StringBuilder();
 		for(Tag<?> t : tags)
 			sb.append(leaf.get(t, null));
 		return sb.toString();
 	}
-	
+
 	private static String getWidgetContextString(Widget widget){
 		return "";
-		/*int depth = Util.depth(widget), lvls = 0;
-		switch(depth){
-		case 0:
-		case 1:
-			return "";
-		case 2:
-		case 3:
-			lvls = depth - 1;
-			break;
-		default:
-			lvls = 3;
-		}
-		String ctx = "";
-		List<Widget> ancestors = Util.ancestors(widget,lvls);
-		for (Widget ancestor : ancestors){
-			ctx += getTaggedString(ancestor,Tags.Role);
-		}
-		ctx += "@" + getAncestorsContext(ancestors);
-		//ctx += "$" + getIndexPathContext(widget,lvls);
-		return ctx;*/
 	}
-	
-	/*private static String getAncestorsContext(List<Widget> ancestors){
-		String ctx = "";
-		for (Widget ancestor : ancestors){
-			ctx += getAncestorContext(ancestor);
-		}
-		return ctx;
-	}*/	
-	
-	/*private static String getAncestorContext(Widget ancestor){
-		Widget child;
-		Role role;
-		TreeSet<Role> childrenTags = new TreeSet<Role>(new Comparator<Role>(){
-			@Override
-			public int compare(Role o1, Role o2) {
-				return o1.toString().compareTo(o2.toString());
-			}
-		});
-		for (int i=0; i<ancestor.childCount(); i++){
-			child = ancestor.child(i);
-			role = child.get(Tags.Role, null);
-			if (role != null && !childrenTags.contains(role))
-				childrenTags.add(role);
-		}
-		String ctx = "";
-		for (Role r : childrenTags)
-			ctx += r.toString();
-		return ctx;
-	}*/
-	
-	/*private static String getIndexPathContext(Widget widget, int levels){
-		String idxCtx = "";
-		int[] idxPath = Util.indexPath(widget);
-		for (int i=idxPath.length - levels; i<idxPath.length; i++){
-			idxCtx += "[" + idxPath[i] + "]";
-		}
-		return idxCtx;
-	}*/	
-		
+
 	// ################
 	//  ACTIONS CODING
 	// ################
 
-	private static String codify(String stateID, Action action, Role... discardParameters){
-		return toID(stateID + action.toString(discardParameters));
-	}	
-	
+	private static String codify(String stateID, Action action, Tag<?>... tags) {
+		return toID(stateID + getActionString(action , tags));
+	}
+
+	private static String getActionString(Action action, Tag<?>... tags){
+		return getTaggedString(action,tags);
+	}
+
+	private static String getTaggedString(Action leaf, Tag<?>... tags){
+		StringBuilder sb = new StringBuilder();
+		for(Tag<?> t : tags)
+			sb.append(leaf.get(t, null));
+		return sb.toString();
+	}
+
 	// ############
 	//  IDS CODING
 	// ############
@@ -303,30 +282,12 @@ public class CodingManager {
 	private static String lowCollisionID(String text){ // reduce ID collision probability
 		CRC32 crc32 = new CRC32(); crc32.update(text.getBytes());
 		return Integer.toUnsignedString(text.hashCode(), Character.MAX_RADIX) +
-			   Integer.toHexString(text.length()) +
-			   crc32.getValue();
+				Integer.toHexString(text.length()) +
+				crc32.getValue();
 	}
-	
-	/*private static final boolean DEBUG_ID_COLLISIONS = false;
-	private static Map<String,String> idMap = new HashMap<String,String>(); // id x text
-	private static int idCollisions = 0;
-	private static int debugCounter = 0;*/
-	
+
 	private static String toID(String text){
-		/*if (DEBUG_ID_COLLISIONS){
-			String id = lowCollisionID(text);
-			String t = idMap.get(id);
-			if (t == null)
-				idMap.put(id, text);
-			else if (!t.equals(text))
-				idCollisions++;
-			if (idCollisions > 0 && debugCounter++ > 1000){
-				debugCounter = 0;
-				System.out.println(idCollisions + " ID collisions! (" + idMap.size() + ")");
-			}
-			return id;
-		} else*/
-			return lowCollisionID(text);
+		return lowCollisionID(text);
 	}
 
 	// #####################################
@@ -357,28 +318,16 @@ public class CodingManager {
 	// #################
 	//  Utility methods
 	// #################
-	
+
 	public static Widget find(State state, String widgetID, String idType){
 		Tag<String> t = null;
 		switch(idType){
-			case CodingManager.CONCRETE_ID:
-				t = Tags.ConcreteID;
-				break;
-			case CodingManager.ABSTRACT_R_ID:
-				t = Tags.Abstract_R_ID;
-				break;
-			case CodingManager.ABSTRACT_R_T_ID:
-				t = Tags.Abstract_R_T_ID;
-				break;
-			case CodingManager.ABSTRACT_R_T_P_ID:
-				t = Tags.Abstract_R_T_P_ID;
-				break;
-			case CodingManager.CONCRETE_ID_CUSTOM:
-				t = Tags.ConcreteIDCustom;
-				break;
-			case CodingManager.ABSTRACT_ID_CUSTOM:
-				t = Tags.AbstractIDCustom;
-				break;
+		case CodingManager.CONCRETE_ID:
+			t = Tags.ConcreteID;
+			break;
+		case CodingManager.ABSTRACT_ID:
+			t = Tags.AbstractID;
+			break;
 		}
 
 		for (Widget w : state){
@@ -389,5 +338,5 @@ public class CodingManager {
 	}
 
 
-	
+
 }

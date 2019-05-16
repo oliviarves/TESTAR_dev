@@ -1,31 +1,32 @@
 /***************************************************************************************************
-*
-* Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-* 1. Redistributions of source code must retain the above copyright notice,
-* this list of conditions and the following disclaimer.
-* 2. Redistributions in binary form must reproduce the above copyright
-* notice, this list of conditions and the following disclaimer in the
-* documentation and/or other materials provided with the distribution.
-* 3. Neither the name of the copyright holder nor the names of its
-* contributors may be used to endorse or promote products derived from
-* this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*******************************************************************************************************/
+ *
+ * Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019 Universitat Politecnica de Valencia - www.upv.es
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the copyright holder nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *******************************************************************************************************/
 
 
 /**
@@ -64,28 +65,28 @@ class UIAWidget implements Widget, Serializable {
 	Map<Tag<?>, Object> tags = Util.newHashMap();
 	List<UIAWidget> children = new ArrayList<UIAWidget>();
 	UIAElement element;
-		
+
 	protected UIAWidget(UIAState root, UIAWidget parent, UIAElement element){
 		this.parent = parent;
 		this.element = element;
 		this.root = root;
-		
+
 		if(parent != null)
 			root.connect(parent, this);
 	}
-	
+
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
 		ois.defaultReadObject();
 	}
-	
+
 	private void writeObject(ObjectOutputStream oos) throws IOException{
 		oos.defaultWriteObject();
 	}
 
-	
+
 	final boolean valid(){ return root != null; }
 	final void check(){ if(root == null) throw new IllegalStateException(); }
-	
+
 	final public void moveTo(Widget p, int idx) { /*check();*/ root.setParent(this, p, idx); }
 	public final UIAWidget addChild() { /*check();*/ return root.addChild(this, null); }
 	public final UIAState root() { return root; }
@@ -113,7 +114,7 @@ class UIAWidget implements Widget, Serializable {
 		dragPoints[dragC-1] -= 5;
 		return dragPoints;
 	}
-	
+
 	// by urueda (scrolls helper)
 	private Drag[] getDrags(Shape shape,
 			boolean scrollOrientation, // true = horizontal, false = vertical
@@ -141,15 +142,15 @@ class UIAWidget implements Widget, Serializable {
 		Drag[] drags = new Drag[dragC];
 		for (int i=0; i<dragC; i++){
 			drags[i] = new Drag(
-				fixedH,
-				fixedV,
-				scrollOrientation ? shape.x() + scrollArrowSize + emptyDragPoints[i] : fixedH,
-				scrollOrientation ? fixedV : shape.y() + scrollArrowSize + emptyDragPoints[i]
-			);
+					fixedH,
+					fixedV,
+					scrollOrientation ? shape.x() + scrollArrowSize + emptyDragPoints[i] : fixedH,
+							scrollOrientation ? fixedV : shape.y() + scrollArrowSize + emptyDragPoints[i]
+					);
 		}
 		return drags;
 	}
-		
+
 	// by urueda
 	@Override
 	public Drag[] scrollDrags(double scrollArrowSize, double scrollThick) {		
@@ -180,10 +181,10 @@ class UIAWidget implements Widget, Serializable {
 				}
 			}
 		}
-				
+
 		return Util.join(hDrags,vDrags);
 	}
-	
+
 	/**
 	 * @param tab A tabulator for indentation.
 	 * @return Computes a string representation of the widget properties.
@@ -202,12 +203,12 @@ class UIAWidget implements Widget, Serializable {
 			pr.append(tab + "SHAPE = " + shape.toString() + "\n");
 		pr.append(tab + "CHILDREN = " + this.childCount() + "\n");
 		pr.append(tab + "PATH = " + this.get(Tags.Path) + "\n");
-		
+
 		// missing any critical property for unique representation?
-		
+
 		return pr.toString();
 	}
-	
+
 	/**
 	 * @param tab tabulator for indentation.
 	 * @return Computes a string representation for the widget.
@@ -216,17 +217,15 @@ class UIAWidget implements Widget, Serializable {
 	public String getRepresentation(String tab){
 		StringBuffer repr = new StringBuffer();
 		repr.append(tab + "WIDGET = " + this.get(Tags.ConcreteID) + ", " +
-				this.get(Tags.Abstract_R_ID) + ", " +
-				this.get(Tags.Abstract_R_T_ID) + ", " +
-				this.get(Tags.Abstract_R_T_P_ID) + "\n");
+				this.get(Tags.AbstractID) + "\n");
 		repr.append(getPropertiesRepresentation(tab));
 		return repr.toString();
 	}
-	
+
 	// by urueda
 	@Override
 	public String toString(Tag<?>... tags){
 		return Util.treeDesc(this, 2, tags);
 	}
-		
+
 }

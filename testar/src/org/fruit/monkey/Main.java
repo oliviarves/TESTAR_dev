@@ -492,6 +492,20 @@ public class Main {
 					add("Role");
 				}
 			}));
+			
+			defaults.add(Pair.from(ConcreteActionAttributes, new ArrayList<String>() {
+				{
+					add("TargetConcreteID");
+					add("Desc");
+				}
+			}));
+			
+			defaults.add(Pair.from(AbstractActionAttributes, new ArrayList<String>() {
+				{
+					add("TargetAbstractID");
+					add("Role");
+				}
+			}));
 
 			//Overwrite the default settings with those from the file
 			Settings settings = Settings.fromFile(defaults, file);
