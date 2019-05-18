@@ -19,12 +19,14 @@ public class ReplayableSequences {
      *
      * @param state
      */
-    public static void initFragmentForReplayableSequence(State state, Taggable fragment){
+    public static Taggable initFragmentForReplayableSequence(State state){
         // Fragment is used for saving a replayable sequence:
-        fragment = new TaggableBase();
+        Taggable fragment = new TaggableBase();
         fragment.set(SystemState, state);
         Verdict verdict = state.get(OracleVerdict, Verdict.OK);
         fragment.set(OracleVerdict, verdict);
+        
+        return fragment;
     }
 
     /**

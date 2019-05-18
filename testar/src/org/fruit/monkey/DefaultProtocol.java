@@ -446,7 +446,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
     }
 
     private Taggable fragment; // Fragment is used for saving a replayable sequence:
-    private Verdict verdict;
+    private Verdict verdict = Verdict.OK;
     private long tStart;
 
     /**
@@ -557,7 +557,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
                 beginSequence(system, state);
 
                 //initializing fragment for recording replayable test sequence:
-                ReplayableSequences.initFragmentForReplayableSequence(state, fragment);
+                fragment = ReplayableSequences.initFragmentForReplayableSequence(state);
 
                 // notify the statemodelmanager
                 stateModelManager.notifyTestSequencedStarted();
@@ -818,6 +818,9 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
         //If system it's null means that we have started TESTAR from the Record User Actions Mode
         //We need to invoke the SUT & the canvas representation
         if(system == null) {
+        	
+        	preSequencePreparations();
+        	
         	system = startSystem();
         	startedRecordMode = true;
         	this.cv = buildCanvas();
@@ -836,7 +839,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
             	processListener.startListeners(system, settings);
 
         	//initializing fragment for recording replayable test sequence:
-        	ReplayableSequences.initFragmentForReplayableSequence(getState(system),fragment);
+        	fragment = ReplayableSequences.initFragmentForReplayableSequence(getState(system));
         	
         	// notify the statemodelmanager
             stateModelManager.notifyTestSequencedStarted();
@@ -895,7 +898,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
              */
             if(actionStatus.getAction()!=null) {
             	//System.out.println("DEBUG: User action is not null");
-            	ReplayableSequences.saveActionIntoFragmentForReplayableSequence(actionStatus.getAction(), state, actions,fragment,processVerdict,settings());
+            	ReplayableSequences.saveActionIntoFragmentForReplayableSequence(actionStatus.getAction(), state, actions, fragment, processVerdict, settings());
             }else {
             	//System.out.println("DEBUG: User action ----- null");
             }
