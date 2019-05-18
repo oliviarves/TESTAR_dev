@@ -110,6 +110,7 @@ import es.upv.staq.testar.serialisation.TestSerialiser;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.slf4j.LoggerFactory;
+import org.testar.ReplayableSequences;
 
 public class DefaultProtocol extends RuntimeControlsProtocol {
 
@@ -134,11 +135,12 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
     
     protected ProcessListener processListener = new ProcessListener();
     private boolean enabledProcessListener = false;
-    private static Verdict processVerdict = Verdict.OK;
-    public static void setProcessVerdict(Verdict newprocessVerdict) {
+    //TODO these are static to let ProcessListener to set verdicts - should be changed into a more elegant way:
+    static private Verdict processVerdict = Verdict.OK;
+    static public void setProcessVerdict(Verdict newprocessVerdict) {
         processVerdict = newprocessVerdict;
     }
-    protected static Verdict getProcessVerdict() {
+    static protected Verdict getProcessVerdict() {
         return processVerdict;
     }
 
@@ -555,7 +557,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
                 beginSequence(system, state);
 
                 //initializing fragment for recording replayable test sequence:
-                initFragmentForReplayableSequence(state);
+                ReplayableSequences.initFragmentForReplayableSequence(state, fragment);
 
                 // notify the statemodelmanager
                 stateModelManager.notifyTestSequencedStarted();
@@ -569,7 +571,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
                 state = getState(system);
 
                 //Saving the state into replayable test sequence:
-                saveStateIntoFragmentForReplayableSequence(state);
+                ReplayableSequences.saveStateIntoFragmentForReplayableSequence(state,fragment,processVerdict,settings());
 
                 //calling finishSequence() to allow scripting GUI interactions to close the SUT:
                 finishSequence();
@@ -577,7 +579,8 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
                 // notify the state model manager of the sequence end
                 stateModelManager.notifyTestSequenceStopped();
 
-                writeAndCloseFragmentForReplayableSequence();
+                ReplayableSequences.writeAndCloseFragmentForReplayableSequence(fragment);
+                LogSerialiser.log("Sequence " + sequenceCount + " finished.\n", LogSerialiser.LogLevel.Info);
 
                 if (faultySequence)
                     LogSerialiser.log("Sequence contained faults!\n", LogSerialiser.LogLevel.Critical);
@@ -707,7 +710,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
             actionCount++;
 
             //Saving the actions and the executed action into replayable test sequence:
-            saveActionIntoFragmentForReplayableSequence(action, state, actions);
+            ReplayableSequences.saveActionIntoFragmentForReplayableSequence(action, state, actions,fragment,processVerdict,settings());
 
             // Resetting the visualization:
             Util.clear(cv);
@@ -720,82 +723,6 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
         stateModelManager.notifyNewStateReached(state, actions);
     }
 
-    /**
-     * This method initializes the fragment for replayable sequence
-     *
-     * @param state
-     */
-    private void initFragmentForReplayableSequence(State state){
-        // Fragment is used for saving a replayable sequence:
-        fragment = new TaggableBase();
-        fragment.set(SystemState, state);
-        verdict = state.get(OracleVerdict, Verdict.OK);
-        fragment.set(OracleVerdict, verdict);
-    }
-
-    /**
-     * Saving the action into the fragment for replayable sequence
-     *
-     * @param action
-     */
-    private void saveActionIntoFragmentForReplayableSequence(Action action, State state, Set<Action> actions) {
-    	processVerdict = getProcessVerdict();
-    	verdict = state.get(OracleVerdict, Verdict.OK);
-    	fragment.set(OracleVerdict, verdict.join(processVerdict));
-    	fragment.set(ExecutedAction,action);
-        fragment.set(ActionSet, actions);
-    	fragment.set(ActionDuration, settings().get(ConfigTags.ActionDuration));
-    	fragment.set(ActionDelay, settings().get(ConfigTags.TimeToWaitAfterAction));
-    	LogSerialiser.log("Writing fragment to sequence file...\n",LogSerialiser.LogLevel.Debug);
-        TestSerialiser.write(fragment);
-        //resetting the fragment:
-        fragment =new TaggableBase();
-        fragment.set(SystemState, state);
-    }
-
-
-    /**
-     * Saving the action into the fragment for replayable sequence
-     *
-     * @param state
-     */
-    private void saveStateIntoFragmentForReplayableSequence(State state) {
-        processVerdict = getProcessVerdict();
-        verdict = state.get(OracleVerdict, Verdict.OK);
-        fragment.set(OracleVerdict, verdict.join(processVerdict));
-        fragment.set(ActionDuration, settings().get(ConfigTags.ActionDuration));
-        fragment.set(ActionDelay, settings().get(ConfigTags.TimeToWaitAfterAction));
-        LogSerialiser.log("Writing fragment to sequence file...\n",LogSerialiser.LogLevel.Debug);
-        TestSerialiser.write(fragment);
-        //resetting the fragment:
-        fragment =new TaggableBase();
-        fragment.set(SystemState, state);
-    }
-
-    /**
-     * Writing the fragment into file and closing the test serialiser
-     */
-    private void writeAndCloseFragmentForReplayableSequence() {
-        //closing ScreenshotSerialiser:
-        ScreenshotSerialiser.finish();
-        LogSerialiser.log("Writing fragment to sequence file...\n", LogSerialiser.LogLevel.Debug);
-        TestSerialiser.write(fragment);
-        
-        //Wait since TestSerialiser write all fragments on sequence File
-        while(!TestSerialiser.isSavingQueueEmpty() && !ScreenshotSerialiser.isSavingQueueEmpty()) {
-        	//System.out.println("Saving sequences...");
-        	synchronized (this) {
-				try {
-					this.wait(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-        }
-        TestSerialiser.finish();
-        LogSerialiser.log("Wrote fragment to sequence file!\n", LogSerialiser.LogLevel.Debug);
-        LogSerialiser.log("Sequence " + sequenceCount + " finished.\n", LogSerialiser.LogLevel.Info);
-    }
 
     /**
      * Saving the action information into the logs
@@ -909,7 +836,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
             	processListener.startListeners(system, settings);
 
         	//initializing fragment for recording replayable test sequence:
-        	initFragmentForReplayableSequence(getState(system));
+        	ReplayableSequences.initFragmentForReplayableSequence(getState(system),fragment);
         	
         	// notify the statemodelmanager
             stateModelManager.notifyTestSequencedStarted();
@@ -968,7 +895,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
              */
             if(actionStatus.getAction()!=null) {
             	//System.out.println("DEBUG: User action is not null");
-            	saveActionIntoFragmentForReplayableSequence(actionStatus.getAction(), state, actions);
+            	ReplayableSequences.saveActionIntoFragmentForReplayableSequence(actionStatus.getAction(), state, actions,fragment,processVerdict,settings());
             }else {
             	//System.out.println("DEBUG: User action ----- null");
             }
@@ -999,7 +926,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
             stateModelManager.notifyTestingEnded();
         	
         	//Closing fragment for recording replayable test sequence:
-        	writeAndCloseFragmentForReplayableSequence();
+        	ReplayableSequences.writeAndCloseFragmentForReplayableSequence(fragment);
 
         	//Copy sequence file into proper directory:
         	classifyAndCopySequenceIntoAppropriateDirectory(Verdict.OK,generatedSequence,currentSeq);
