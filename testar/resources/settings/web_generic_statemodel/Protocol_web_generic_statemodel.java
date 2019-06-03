@@ -1,8 +1,7 @@
-/***************************************************************************************************
- *
- * Copyright (c) 2018, 2019 Universitat Politecnica de Valencia - www.upv.es
+/*
+ * Copyright (c) 2013, 2014, 2015, 2016, 2017, 2018, 2019 Universitat Politecnica de Valencia - www.upv.es
  * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
@@ -26,25 +25,32 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************************************/
+ *
+ */
 
-
-import java.util.Set;
-import org.fruit.alayer.*;
-import org.fruit.alayer.exceptions.StateBuildException;
-import nl.ou.testar.RandomActionSelector;
 import es.upv.staq.testar.NativeLinker;
+import es.upv.staq.testar.protocols.ClickFilterLayerProtocol;
+import org.fruit.Pair;
+import org.fruit.alayer.*;
+import org.fruit.alayer.actions.*;
+import org.fruit.alayer.exceptions.ActionBuildException;
+import org.fruit.alayer.exceptions.StateBuildException;
+import org.fruit.alayer.exceptions.SystemStartException;
+import org.fruit.alayer.webdriver.*;
+import org.fruit.alayer.webdriver.enums.WdRoles;
 import org.fruit.monkey.ConfigTags;
 import org.fruit.monkey.Settings;
 import org.testar.protocols.DesktopProtocol;
 
-/**
- * This protocol is using the default Windows accessibility API (Windows UI Automation API) to test Web applications.
- *
- * It also extracts state models into graph database and uses state model to improve action selection
- *  so the graph model has to be enabled in the test settings.
- */
-public class Protocol_web_orientdb extends DesktopProtocol {
+import java.util.*;
+
+import static org.fruit.alayer.Tags.Blocked;
+import static org.fruit.alayer.Tags.Enabled;
+import static org.fruit.alayer.webdriver.Constants.scrollArrowSize;
+import static org.fruit.alayer.webdriver.Constants.scrollThick;
+
+
+public class Protocol_web_generic_statemodel extends DesktopProtocol {
 
 	// This protocol expects Mozilla Firefox or Microsoft Internet Explorer on Windows10
 
@@ -56,7 +62,6 @@ public class Protocol_web_orientdb extends DesktopProtocol {
 	 * This method can be used to perform initial setup work
 	 * @param   settings   the current TESTAR settings as specified by the user.
 	 */
-	@Override
 	protected void initialize(Settings settings){
 		super.initialize(settings);
 		initBrowser();
@@ -80,7 +85,6 @@ public class Protocol_web_orientdb extends DesktopProtocol {
 	 * state is erroneous and if so why.
 	 * @return  the current state of the SUT with attached oracle.
 	 */
-	@Override
 	protected State getState(SUT system) throws StateBuildException{
 
 		State state = super.getState(system);
@@ -122,29 +126,30 @@ public class Protocol_web_orientdb extends DesktopProtocol {
 		else
 			return false;		
 	}
-
+	
 	/**
-	 * Select one of the possible actions (e.g. at random)
+	 * Select one of the available actions using an action selection algorithm (for example random action selection)
+	 *
 	 * @param state the SUT's current state
-	 * @param actions the set of available actions as computed by <code>buildActionsSet()</code>
+	 * @param actions the set of derived actions
 	 * @return  the selected action (non-null!)
 	 */
 	@Override
 	protected Action selectAction(State state, Set<Action> actions){
+
 		//Call the preSelectAction method from the AbstractProtocol so that, if necessary,
 		//unwanted processes are killed and SUT is put into foreground.
 		Action retAction = preSelectAction(state, actions);
-		if (retAction == null) {
-			//if no preSelected actions are needed, then implement your own strategy
+		if (retAction== null) {
+			//if no preSelected actions are needed, then implement your own action selection strategy
 			//using the action selector of the state model:
 			retAction = stateModelManager.getAbstractActionToExecute(actions);
 		}
 		if(retAction==null) {
 			System.out.println("State model based action selection did not find an action. Using default action selection.");
-			//if your own action selection algorithm fails to find an action, use the default random action selection:
+			// if state model fails, use default:
 			retAction = super.selectAction(state, actions);
 		}
 		return retAction;
 	}
-
 }
