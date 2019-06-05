@@ -30,6 +30,7 @@
 
 import es.upv.staq.testar.NativeLinker;
 import es.upv.staq.testar.protocols.ClickFilterLayerProtocol;
+
 import org.fruit.Pair;
 import org.fruit.alayer.*;
 import org.fruit.alayer.actions.*;
@@ -53,7 +54,10 @@ import static org.fruit.alayer.webdriver.Constants.scrollThick;
 public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	// Classes that are deemed clickable by the web framework
 	private static List<String> clickableClasses = Arrays.asList(
-			"v-menubar-menuitem", "v-menubar-menuitem-caption");
+			"v-menubar-menuitem", "v-menubar-menuitem-caption",
+			"mat-icon", "mat-button", "mat-menu-item", "mat-menu-ripple",
+			"mat-button-focus-overlay", "flag-icon", "mat-tab-label-content",
+			"mat-input-element", "mat-checkbox-label", "mat-option-text");
 
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
@@ -165,12 +169,12 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 			}
 
 			// type into text boxes
-			if (isAtBrowserCanvas(widget) && (whiteListed(widget) || isUnfiltered(widget) || isTypeable(widget))) {
+			if (isAtBrowserCanvas(widget) && isTypeable(widget) && (whiteListed(widget) || isUnfiltered(widget))) {
 				actions.add(ac.clickTypeInto(widget, this.getRandomText(widget), true));
 			}
 
 			// left clicks, but ignore links outside domain
-			if (isAtBrowserCanvas(widget) && (whiteListed(widget) || isUnfiltered(widget) || isClickable(widget))) {
+			if (isAtBrowserCanvas(widget) && isClickable(widget) && (whiteListed(widget) || isUnfiltered(widget))) {
 				if (!isLinkDenied(widget)) {
 					actions.add(ac.leftClickAt(widget));
 				}
