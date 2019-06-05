@@ -64,7 +64,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	// An empty list will be filled with the domain from the sut connector
 	// Set to null to ignore this feature
 	private static List<String> domainsAllowed =
-			Arrays.asList("www.ou.nl");
+			Arrays.asList("www.ou.nl", "10.101.0.222:8081");
 	//At the moment running MyThaiStar with ip domain (configure)
 
 	// If true, follow links opened in new tabs
@@ -73,8 +73,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 
 	// URL + form name, username input id + value, password input id + value
 	// Set login to null to disable this feature
-	private static Pair<String, String> login = Pair.from(
-			"https://login.awo.ou.nl/SSO/login", "OUinloggen");
+	private static Pair<String, String> login = null;
 	private static Pair<String, String> username = Pair.from("username", "");
 	private static Pair<String, String> password = Pair.from("password", "");
 

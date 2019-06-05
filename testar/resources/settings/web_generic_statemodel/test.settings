@@ -23,7 +23,7 @@ Mode = Spy
 # The SUT must be manually started and closed.
 #################################################################
 SUTConnector = COMMAND_LINE
-SUTConnectorValue = "C:\\Program Files\\Internet Explorer\\iexplore.exe" "http://ip:port"
+SUTConnectorValue = "C:\\Program Files\\Internet Explorer\\iexplore.exe" "http://10.101.0.222:8081"
 
 #################################################################
 # Sequences

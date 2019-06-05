@@ -126,7 +126,7 @@ public class HtmlSequenceReport {
     }
 
     public void addSequenceStep(State state, String actionImagePath){
-        String imagePath = state.get(Tags.ScreenshotPath);
+        String imagePath = state.get(Tags.ScreenshotPath, "HTMLReport: ScreenshotPath error");
         // repairing the file paths:
         if(imagePath.contains("./output")){
             imagePath = imagePath.replace("./output","../");
@@ -151,7 +151,7 @@ public class HtmlSequenceReport {
     }
 
     private void writeStateIntoReport(State state){
-        String imagePath = state.get(Tags.ScreenshotPath);
+        String imagePath = state.get(Tags.ScreenshotPath, "HTMLReport: ScreenshotPath error");
         if(imagePath.contains("./output")){
             imagePath = imagePath.replace("./output","../");
         }
