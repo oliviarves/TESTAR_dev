@@ -36,7 +36,7 @@ SUTConnectorValue = "C:\\webdrivers\\chromedriver.exe" "1920x900+0+0" "http://10
 #################################################################
 
 Sequences = 1
-SequenceLength = 100
+SequenceLength = 20
 
 #################################################################
 # Oracles based on suspicious titles
@@ -86,8 +86,8 @@ GraphDBPassword = testar
 StateModelEnabled = true
 DataStore = OrientDB
 DataStoreType = remote
-DataStoreServer = localhost
-DataStoreDB = testar
+DataStoreServer = 10.101.0.238
+DataStoreDB = webdriver_mythaistar
 DataStoreUser = testar
 DataStorePassword = testar
 DataStoreMode = instant

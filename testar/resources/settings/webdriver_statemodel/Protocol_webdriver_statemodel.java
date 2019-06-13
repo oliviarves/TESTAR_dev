@@ -55,9 +55,16 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	// Classes that are deemed clickable by the web framework
 	private static List<String> clickableClasses = Arrays.asList(
 			"v-menubar-menuitem", "v-menubar-menuitem-caption",
-			"mat-icon", "mat-button", "mat-menu-item", "mat-menu-ripple",
-			"mat-button-focus-overlay", "flag-icon", "mat-tab-label-content",
-			"mat-input-element", "mat-checkbox-label", "mat-option-text");
+			//Main page
+			"mat-button-ripple", "flag-icon", "mat-menu-ripple", "mat-icon", //OK
+			"mat-tab-label-content", //OK
+			//Menu page
+			"mat-input-element", "mat-slider", //Not working
+				//Sort by and options
+				"mat-select-arrow-wrapper", //Not working
+				"mat-option-ripple", //OK
+			//Book table page
+			"mat-tab-label", "mat-checkbox-ripple", "mat-tab-header-pagination"); //Not working
 
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
