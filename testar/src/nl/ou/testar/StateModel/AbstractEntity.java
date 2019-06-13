@@ -61,7 +61,7 @@ public abstract class AbstractEntity {
         try {
             attributes.set(attribute, value);
         } catch (Exception e) {
-            System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
+            //System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
         }
     }
 

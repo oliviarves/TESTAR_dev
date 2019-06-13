@@ -36,7 +36,7 @@ public class EntityManager {
      */
     public EntityManager(Config config) {
         String connectionString = config.getConnectionType() + ":" + (config.getConnectionType().equals("remote") ?
-                config.getServer() : config.getDatabaseDirectory());
+                config.getServer() : config.getDatabaseDirectory()) + "/";
         orientDB = new OrientDB(connectionString, OrientDBConfig.defaultConfig());
         dbConfig = config;
         init();
