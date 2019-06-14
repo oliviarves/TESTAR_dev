@@ -45,9 +45,10 @@ public class Widget {
      */
     public void addAttribute(Tag attribute, Object value) {
         try {
-            attributes.set(attribute, value);
+        	if(!attribute.name().contains("WebOrientation"))
+        		attributes.set(attribute, value);
         } catch (Exception e) {
-            //System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
+            System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
         }
     }
 

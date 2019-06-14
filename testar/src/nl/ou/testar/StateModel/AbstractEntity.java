@@ -58,11 +58,11 @@ public abstract class AbstractEntity {
      * @param value
      */
     public void addAttribute(Tag attribute, Object value) {
-        try {
-            attributes.set(attribute, value);
-        } catch (Exception e) {
-            //System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
-        }
+    	try {
+    		attributes.set(attribute, value);
+    	} catch (Exception e) {
+    		System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
+    	}
     }
 
     /**

@@ -1,6 +1,7 @@
-/*
- * Copyright (c) 2013, 2014, 2015, 2016, 2017, 2019 Universitat Politecnica de Valencia - www.upv.es
- * Copyright (c) 2019 Open Universiteit - www.ou.nl
+/**
+ * 
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ * Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -56,16 +57,23 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	private static List<String> clickableClasses = Arrays.asList(
 			"v-menubar-menuitem", "v-menubar-menuitem-caption",
 			//Main page
-			"mat-button-ripple", "flag-icon", "mat-menu-ripple", "mat-icon", //OK
-			"mat-tab-label-content", //OK
+			"mat-button-ripple", "flag-icon", "mat-menu-ripple", "mat-icon", "mat-tab-label-content", //OK
 			//Menu page
-			"mat-input-element", "mat-slider", //Not working
+				"mat-checkbox-label",
 				//Sort by and options
-				"mat-select-arrow-wrapper", //Not working
-				"mat-option-ripple", //OK
-			//Book table page
-			"mat-tab-label", "mat-checkbox-ripple", "mat-tab-header-pagination"); //Not working
+				"mat-select-placeholder", "mat-option-ripple" //OK
+			);
 
+	private static List<String> typeableClasses = Arrays.asList(
+			//Text input of Menu page
+			"mat-input-element"//bookTable Page and Sign UP not detecting Email
+			);
+	
+	private static List<String> slidesClasses = Arrays.asList(
+			"mat-slider" //Not working yet, customize these kind of actions
+			);
+	
+	
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
 	private static List<String> deniedExtensions = Arrays.asList(
@@ -145,8 +153,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	 * @return a set of actions
 	 */
 	@Override
-	protected Set<Action> deriveActions(SUT system, State state)
-			throws ActionBuildException {
+	protected Set<Action> deriveActions(SUT system, State state) throws ActionBuildException {
 		// Kill unwanted processes, force SUT to foreground
 		Set<Action> actions = super.deriveActions(system, state);
 
@@ -185,6 +192,11 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 				if (!isLinkDenied(widget)) {
 					actions.add(ac.leftClickAt(widget));
 				}
+			}
+			
+			// slider widgets
+			if (isAtBrowserCanvas(widget) && isSlider(widget) && (whiteListed(widget) || isUnfiltered(widget))) {
+				addSlidingActions(actions, ac, scrollArrowSize, scrollThick, widget, state);
 			}
 		}
 
@@ -437,6 +449,14 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	}
 
 	protected boolean isTypeable(Widget widget) {
+		
+		WdElement element = ((WdWidget) widget).element;
+
+		Set<String> clickSet = new HashSet<>(typeableClasses);
+		clickSet.retainAll(element.cssClasses);
+		if(clickSet.size() > 0)
+			return true;
+		
 		Role role = widget.get(Tags.Role, Roles.Widget);
 		if (Role.isOneOf(role, NativeLinker.getNativeTypeableRoles())) {
 			// Input type are special...
@@ -446,6 +466,18 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 			}
 			return true;
 		}
+
+		return false;
+	}
+	
+	protected boolean isSlider(Widget widget) {
+		
+		WdElement element = ((WdWidget) widget).element;
+
+		Set<String> clickSet = new HashSet<>(slidesClasses);
+		clickSet.retainAll(element.cssClasses);
+		if(clickSet.size() > 0)
+			return true;
 
 		return false;
 	}
