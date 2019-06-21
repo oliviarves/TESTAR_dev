@@ -131,6 +131,13 @@ public class ScreenshotSerialiser extends Thread {
 			savethis(actionPath,actionshot);
 		return actionPath;
 	}
+	
+	public static String saveWidgetShot(String stateID, String widgetID, AWTCanvas widgetshot) {
+		String widgetPath = scrshotOutputFolder + File.separator + testSequenceFolder + File.separator + stateID + "_" + widgetID + ".png";
+		if (!new File(widgetPath).exists())
+			savethis(widgetPath, widgetshot);
+		return widgetPath;
+	}
 
 	private static void savethis(String scrshotPath, AWTCanvas scrshot){
 		if (alive){

@@ -90,6 +90,9 @@ public class Protocol_web_generic_statemodel extends DesktopProtocol {
 		State state = super.getState(system);
 
 		for(Widget w : state){
+			
+			//protocolUtil.getWidgetshot(state, w);
+			
 			Role role = w.get(Tags.Role, Roles.Widget);
 			if(Role.isOneOf(role, new Role[]{NativeLinker.getNativeRole("UIAToolBar")}))
 				browser_toolbar_filter = w.get(Tags.Shape,null).y() + w.get(Tags.Shape,null).height();
