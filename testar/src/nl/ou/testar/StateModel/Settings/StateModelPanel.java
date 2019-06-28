@@ -30,9 +30,11 @@
 
 package nl.ou.testar.StateModel.Settings;
 
+import es.upv.staq.testar.StateManagementTags;
 import nl.ou.testar.StateModel.Analysis.AnalysisManager;
 import nl.ou.testar.StateModel.Analysis.HttpServer.JettyServer;
 import nl.ou.testar.StateModel.Persistence.OrientDB.Entity.Config;
+import org.fruit.alayer.Tag;
 import org.fruit.monkey.ConfigTags;
 import org.fruit.monkey.Settings;
 
@@ -41,8 +43,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Panel with settings for the state model inference module.
@@ -77,8 +82,11 @@ public class StateModelPanel extends JPanel {
     private JCheckBox accessBridgeEnabledBox = new JCheckBox();
     private JTextField dataStoreDirectoryField = new JTextField();
     private JButton dirButton = new JButton("..");
+    private JButton stateTagsButton = new JButton("Advanced");
+    private AbstractStateSettings stateTagsDialog;
     private JButton analysisButton = new JButton("Analysis");
-    private JDialog analysisDialog;
+    private Tag<?>[] allStateManagementTags;
+    private Tag<?>[] selectedStateManagementTags;
 
     private String outputDir;
 
@@ -100,6 +108,8 @@ public class StateModelPanel extends JPanel {
      * Initialize panel.
      */
     private void initialize() {
+        // fetch the available state management tags
+        allStateManagementTags = StateManagementTags.getAllTags().toArray(new Tag<?>[0]);
         // add the components that can be enabled/disabled to the set
         components = new HashSet<>();
         components.add(dataStoreTextfield);
@@ -114,6 +124,7 @@ public class StateModelPanel extends JPanel {
         components.add(accessBridgeEnabledBox);
         components.add(dirButton);
         components.add(analysisButton);
+        components.add(stateTagsButton);
 
         // add the components to the panel
         setLayout(null);
@@ -207,8 +218,18 @@ public class StateModelPanel extends JPanel {
         });
         add(analysisButton);
 
-        label14.setBounds(330, 242, 300, 27);
+        stateTagsButton.setBounds(330, 242, 150, 27);
+        stateTagsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openStateTagSelection();
+            }
+        });
+        add(stateTagsButton);
+
+        label14.setBounds(330, 280, 300, 27);
         add(label14);
+
     }
 
     /**
@@ -245,6 +266,15 @@ public class StateModelPanel extends JPanel {
             outputDir += File.separator;
         }
         outputDir = outputDir + "graphs" + File.separator;
+
+        // set the selected state management tags
+        if (settings.get(ConfigTags.AbstractStateAttributes) != null) {
+            List<String> abstractStateAttributes = settings.get(ConfigTags.AbstractStateAttributes);
+            selectedStateManagementTags = abstractStateAttributes.stream().map(StateManagementTags::getTagFromSettingsString).filter(tag -> tag != null).toArray(Tag<?>[]::new);
+        }
+        else {
+            selectedStateManagementTags = new Tag<?>[0];
+        }
     }
 
     /**
@@ -263,6 +293,7 @@ public class StateModelPanel extends JPanel {
         settings.set(ConfigTags.DataStoreType, (String)dataStoreTypeBox.getSelectedItem());
         settings.set(ConfigTags.ResetDataStore, resetDatabaseCheckbox.isSelected());
         settings.set(ConfigTags.AccessBridgeEnabled, accessBridgeEnabledBox.isSelected());
+        settings.set(ConfigTags.AbstractStateAttributes, Arrays.stream(selectedStateManagementTags).map(StateManagementTags::getSettingsStringFromTag).collect(Collectors.toList()));
     }
 
     /**
@@ -284,7 +315,7 @@ public class StateModelPanel extends JPanel {
     }
 
     private void checkAnalysisButtonActive() {
-        analysisButton.setEnabled(stateModelEnabledChkBox.isSelected() && analysisDialog == null);
+        analysisButton.setEnabled(stateModelEnabledChkBox.isSelected());
     }
 
     private void chooseFileActionPerformed(ActionEvent evt) {
@@ -321,6 +352,17 @@ public class StateModelPanel extends JPanel {
         catch (Exception ex) {
             label14.setText("Please check your connection credentials.");
         }
+    }
+
+    private void openStateTagSelection() {
+        stateTagsDialog = new AbstractStateSettings(allStateManagementTags, selectedStateManagementTags);
+        stateTagsDialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // tell the manager to shut down its connection
+               selectedStateManagementTags = stateTagsDialog.getCurrentlySelectedStateTags();
+            }
+        });
     }
 
 }

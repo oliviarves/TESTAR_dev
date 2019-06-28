@@ -95,7 +95,7 @@ public final class Windows{
 	public static final long WindowVisualState_Minimized = 2;
 
 
-	/* UIA element mode */	
+	/* UIA uiaElement mode */
 	public static final long AutomationElementMode_None = 0;
 	public static final long AutomationElementMode_Full = 1;
 
@@ -131,6 +131,7 @@ public final class Windows{
 	public static final long UIA_FlowsFromPropertyId	= 30148;
 	public static final long UIA_FlowsToPropertyId	= 30106;
 	public static final long UIA_FrameworkIdPropertyId	= 30024;
+	public static final long UIA_FullDescriptionPropertyId = 30159;
 	public static final long UIA_HasKeyboardFocusPropertyId	= 30008;
 	public static final long UIA_HelpTextPropertyId	= 30013;
 	public static final long UIA_IsContentElementPropertyId	= 30017;
@@ -153,7 +154,7 @@ public final class Windows{
 	public static final long UIA_RuntimeIdPropertyId = 30000;
 	public static final long UIA_ProviderDescriptionPropertyId = 30107;
 
-
+	// control pattern property ids
 	public static final long UIA_AnnotationAnnotationTypeIdPropertyId	= 30113;
 	public static final long UIA_AnnotationAnnotationTypeNamePropertyId	= 30114;
 	public static final long UIA_AnnotationAuthorPropertyId	= 30115;
