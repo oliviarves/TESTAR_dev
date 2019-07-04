@@ -78,6 +78,11 @@ public class DesktopProtocol extends ClickFilterLayerProtocol {
         latestState = super.getState(system);
         //adding state to the HTML sequence report:
         htmlReport.addState(latestState);
+        
+        if(settings.get(ConfigTags.WidgetScreenshots))
+        	for(Widget w : getTopWidgets(latestState))
+        		protocolUtil.getWidgetshot(latestState, w, actionCount());
+        
         return latestState;
     }
 

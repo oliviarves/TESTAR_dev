@@ -77,7 +77,6 @@ public final class ConfigTags {
   public static final Tag<Double> TimeToFreeze = Tag.from("TimeToFreeze", Double.class);
   public static final Tag<Boolean> ShowSettingsAfterTest = Tag.from("ShowSettingsAfterTest", Boolean.class);
 
-  // begin by urueda
   public static final Tag<String> SUTConnector = Tag.from("SUTConnector", String.class);
   public static final Tag<String> TestGenerator = Tag.from("TestGenerator", String.class);
   public static final Tag<Double> MaxReward = Tag.from("MaxReward", Double.class);
@@ -97,7 +96,7 @@ public final class ConfigTags {
   public static final Tag<Boolean> AccessBridgeEnabled = Tag.from("AccessBridgeEnabled", Boolean.class);
   public static final Tag<String> SUTProcesses = Tag.from("SUTProcesses", String.class); // Shift+0 shortcut to debug (STDOUT) windows' process names
 
-  // begin by florendegier
+  // graphDB config tags
   public static final Tag<Boolean> GraphDBEnabled = Tag.from("GraphDBEnabled", Boolean.class);
   public static final Tag<String> GraphDBUrl = Tag.from("GraphDBUrl", String.class);
   public static final Tag<String> GraphDBUser = Tag.from("GraphDBUser", String.class);
@@ -121,6 +120,8 @@ public final class ConfigTags {
   @SuppressWarnings("unchecked")
   public static final Tag<List<String>> AbstractStateAttributes = Tag.from("AbstractStateAttributes", (Class<List<String>>) (Class<?>) List.class);
 
+  public static final Tag<Boolean> WidgetScreenshots = Tag.from("WidgetsScreenshots", Boolean.class);
+  
   public static final Tag<Boolean> AlwaysCompile = Tag.from("AlwaysCompile", Boolean.class);
 
   public static final Tag<Boolean> ProcessListenerEnabled = Tag.from("ProcessListenerEnabled", Boolean.class);
