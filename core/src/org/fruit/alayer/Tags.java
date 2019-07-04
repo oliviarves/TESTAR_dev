@@ -55,7 +55,6 @@ public final class Tags extends TagsBase {
 	 * is visible at a specific location determine whether the widget */
 	public static final Tag<HitTester> HitTester = from("HitTester", HitTester.class);
 	
-	
 	/** Usually attached to widgets. Returns a <code>Shape</code> object which allows to 
 	 * draw the widget's shape and to determine whether a point lies within the its shape.
 	 * However, a shape of a widget does not tell whether or not this widget is obscured
@@ -91,7 +90,6 @@ public final class Tags extends TagsBase {
 	/** ZIndex of a widget (objects with higher values are drawn on top of objects with lower values) */
 	public static final Tag<Double> ZIndex = from("ZIndex", Double.class);
 	
-	// begin by urueda
 	/** Maximum observed ZIndex for a UI state */
 	public static final Tag<Double> MaxZIndex = from("MaxZIndex", Double.class);
 	/** Minimum observed ZIndex for a UI state */
@@ -99,7 +97,6 @@ public final class Tags extends TagsBase {
 	
 	/** Related to slides (from_Position -&lt; to_Position) */
 	public static final Tag<Position[]> Slider = from("Slider", Position[].class);;
-	// end by urueda
 	
 	/** Usually attached to systems. Determines whether a system is non-responsive (hanging)
 	 * This does not necessarily mean that the system crashed, it could just process certain tasks. */
@@ -129,7 +126,6 @@ public final class Tags extends TagsBase {
 	/** A unique identifier for a widget / actions / system */
 	public static final Tag<UID> UID = from("UID", UID.class);
 	
-	// begin by urueda
 	public static final Tag<String> Path = from("Path", String.class);
 	public static final Tag<String> ConcreteID = from(CodingManager.CONCRETE_ID, String.class);
 	public static final Tag<String> AbstractID = from("AbstractID", String.class);
@@ -138,7 +134,6 @@ public final class Tags extends TagsBase {
 	public static final Tag<String> Abstract_R_T_P_ID = from(CodingManager.ABSTRACT_R_T_P_ID, String.class);
 	public static final Tag<String> ConcreteIDCustom = from(CodingManager.CONCRETE_ID_CUSTOM, String.class);
 	public static final Tag<String> AbstractIDCustom = from(CodingManager.ABSTRACT_ID_CUSTOM, String. class);
-	// end by urueda
 	
 	@SuppressWarnings("unchecked")
 	public static final Tag<UnFunc<SUT, String>> DynDesc = from("DynDesc", (Class<UnFunc<SUT, String>>)(Class<?>)UnFunc.class);
@@ -150,14 +145,12 @@ public final class Tags extends TagsBase {
 	@SuppressWarnings("unchecked")
 	public static final Tag<List<Finder>> Targets = from("Targets", (Class<List<Finder>>)(Class<?>)List.class);
 	
-	// by urueda
 	/** For actions that apply to a single target, keep the target ID (abstract) */
 	public static final Tag<String> TargetID = from("TargetID", String.class);
 	
 	/** The Process ID. Usually attached to systems. */
 	public static final Tag<Long> PID = from("PID", Long.class);
 
-	// by urueda
 	/** The Process HANDLE. Usually attached to systems. */
 	public static final Tag<Long> HANDLE = from("HANDLE", Long.class);
 	
@@ -168,8 +161,7 @@ public final class Tags extends TagsBase {
 	public static final Tag<Long> TimeStamp = from("TimeStamp", Long.class);
 	
 	/** Usually attached to an object of {@link State}. The value is a screenshot of the state. */
-	//public static final Tag<Image> Screenshot = from("Screenshot", Image.class);
-	public static final Tag<String> ScreenshotPath = from("ScreenshotPath", String.class); // by urueda
+	public static final Tag<String> ScreenshotPath = from("ScreenshotPath", String.class);
 		
 	/** Usually attached to a {@link State} object. The value is an outcome of a test oracle for that state. It is
 	 * used to mark states as 'suspicious' or 'erroneous' */

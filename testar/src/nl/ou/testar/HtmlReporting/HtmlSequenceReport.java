@@ -110,7 +110,7 @@ public class HtmlSequenceReport {
     }
 
     private void writeStateIntoReport(State state){
-        String imagePath = state.get(Tags.ScreenshotPath);
+        String imagePath = state.get(Tags.ScreenshotPath, "No screenshot available for this State");
         if(imagePath.contains("./output")){
         	int indexStart = imagePath.indexOf("./output");
         	int indexScrn = imagePath.indexOf("scrshots");
@@ -184,21 +184,16 @@ public class HtmlSequenceReport {
         }
     }
 
-    public void addSelectedAction(State state, Action action){
-    	String screenshotDir = OutputStructure.screenshotsOutputDir;
-//        System.out.println("path="+state_path);
-    	if(screenshotDir.contains("./output")){
-        	int indexStart = screenshotDir.indexOf("./output");
-        	int indexScrn = screenshotDir.indexOf("scrshots");
-        	String replaceString = screenshotDir.substring(indexStart,indexScrn);
-        	screenshotDir = screenshotDir.replace(replaceString,"../");
+    public void addSelectedAction(Action action){
+    	String actionPath = action.get(Tags.ScreenshotPath, "No screenshot available for this Action");
+
+    	if(actionPath.contains("./output")){
+        	int indexStart = actionPath.indexOf("./output");
+        	int indexScrn = actionPath.indexOf("scrshots");
+        	String replaceString = actionPath.substring(indexStart,indexScrn);
+        	actionPath = actionPath.replace(replaceString,"../");
         }
-//        System.out.println("path="+actionPath);
-        String actionPath = screenshotDir + File.separator 
-        		+ OutputStructure.startInnerLoopDateString + "_" + OutputStructure.executedSUTname
-        		+ "_sequence_" + OutputStructure.sequenceInnerLoopCount 
-        		+ File.separator + state.get(Tags.ConcreteID, "NoConcreteIdAvailable") + "_" + action.get(Tags.ConcreteID, "NoConcreteIdAvailable") + ".png";
-//        System.out.println("path="+actionPath);
+
         write("<h2>Selected Action "+innerLoopCounter+" leading to State "+innerLoopCounter+"\"</h2>");
         write("<h4>concreteID="+action.get(Tags.ConcreteID, "NoConcreteIdAvailable"));
         try{if(action.get(Tags.Desc)!=null) write(" || "+action.get(Tags.Desc));}catch(Exception e){}

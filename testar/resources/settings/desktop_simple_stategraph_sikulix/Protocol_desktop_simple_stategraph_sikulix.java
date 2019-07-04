@@ -113,15 +113,15 @@ public class Protocol_desktop_simple_stategraph_sikulix extends DesktopProtocol 
 	 */
 	@Override
 	protected boolean executeAction(SUT system, State state, Action action){
-		// adding the action that is going to be executed into HTML report:
-		htmlReport.addSelectedAction(state, action);
+	
 		double waitTime = settings().get(ConfigTags.TimeToWaitAfterAction);
 		try{
 			double halfWait = waitTime == 0 ? 0.01 : waitTime / 2.0; // seconds
 			//System.out.println("DEBUG: action: "+action.toString());
 			//System.out.println("DEBUG: action short: "+action.toShortString());
 			if(action.toShortString().equalsIgnoreCase("LeftClickAt")){
-				String widgetScreenshotPath = protocolUtil.getActionshot(state,action);
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
+				action.set(Tags.ScreenshotPath, widgetScreenshotPath);
 				Screen sikuliScreen = new Screen();
 				try {
 					//System.out.println("DEBUG: sikuli clicking ");
@@ -138,7 +138,7 @@ public class Protocol_desktop_simple_stategraph_sikulix extends DesktopProtocol 
 			}else if(action.toShortString().contains("ClickTypeInto(")){
 				String textToType = action.toShortString().substring(action.toShortString().indexOf("("), action.toShortString().indexOf(")"));
 				//System.out.println("parsed text:"+textToType);
-				String widgetScreenshotPath = protocolUtil.getActionshot(state,action);
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
 				Util.pause(halfWait);
 				Screen sikuliScreen = new Screen();
 				try {
@@ -158,7 +158,12 @@ public class Protocol_desktop_simple_stategraph_sikulix extends DesktopProtocol 
 				//System.out.println("DEBUG: TESTAR action");
 				//System.out.println("DEBUG: action desc: "+action.get(Tags.Desc));
 				action.run(system, state, settings().get(ConfigTags.ActionDuration));
-			}return true;
+			}
+			
+			// adding the action that is going to be executed into HTML report:
+			htmlReport.addSelectedAction(action);
+			
+			return true;
 		}catch(ActionFailedException afe){
 			return false;
 		}

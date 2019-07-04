@@ -550,7 +550,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 		tStart = System.currentTimeMillis();
 		//INDEXLOG.info("Starting test sequence {}", sequenceCount());
 
-		actionCount = 1;
+		actionCount = 0;
 		this.testFailTimes = 0;
 		lastSequenceActionNumber = settings().get(ConfigTags.SequenceLength) + actionCount - 1;
 		firstSequenceActionNumber = actionCount;
@@ -1450,7 +1450,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 		Shape viewPort = state.get(Tags.Shape, null);
 		if(viewPort != null){
 			//AWTCanvas scrShot = AWTCanvas.fromScreenshot(Rect.from(viewPort.x(), viewPort.y(), viewPort.width(), viewPort.height()), AWTCanvas.StorageFormat.PNG, 1);
-			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state));
+			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state, 0));
 		}
 
 		calculateZIndices(state);
@@ -1502,7 +1502,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 	private void setStateScreenshot(State state) {
 		Shape viewPort = state.get(Tags.Shape, null);
 		if(viewPort != null){
-			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state));
+			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state, actionCount()));
 		}
 	}
 
@@ -1673,7 +1673,9 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 				waitCycles--;
 			} while (actionCPU > 0 && waitCycles > 0);
 
-			protocolUtil.getActionshot(state,action);
+			String actionPath = protocolUtil.getActionshot(state, action, actionCount()+1);
+			if(actionPath != null)
+				action.set(Tags.ScreenshotPath, actionPath);
 
 			//Save the executed action information into the logs
 			saveActionInfoInLogs(state, action, "ExecutedAction");
