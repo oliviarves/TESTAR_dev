@@ -120,7 +120,7 @@ public final class ConfigTags {
   @SuppressWarnings("unchecked")
   public static final Tag<List<String>> AbstractStateAttributes = Tag.from("AbstractStateAttributes", (Class<List<String>>) (Class<?>) List.class);
 
-  public static final Tag<Boolean> WidgetScreenshots = Tag.from("WidgetsScreenshots", Boolean.class);
+  public static final Tag<Boolean> WidgetScreenshots = Tag.from("WidgetScreenshots", Boolean.class);
   
   public static final Tag<Boolean> AlwaysCompile = Tag.from("AlwaysCompile", Boolean.class);
 

@@ -80,8 +80,11 @@ public class DesktopProtocol extends ClickFilterLayerProtocol {
         htmlReport.addState(latestState);
         
         if(settings.get(ConfigTags.WidgetScreenshots))
-        	for(Widget w : getTopWidgets(latestState))
-        		protocolUtil.getWidgetshot(latestState, w, actionCount());
+        	for(Widget w : getTopWidgets(latestState)) {
+        		String widgetPath = protocolUtil.getWidgetshot(latestState, w, actionCount());
+        		if(w.get(Tags.ScreenshotPath, null) == null && widgetPath != null)
+        			w.set(Tags.ScreenshotPath, widgetPath);
+        	}
         
         return latestState;
     }
