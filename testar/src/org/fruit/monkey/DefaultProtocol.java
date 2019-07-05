@@ -1661,6 +1661,12 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 		double waitTime = settings.get(ConfigTags.TimeToWaitAfterAction);
 		try{
 			double halfWait = waitTime == 0 ? 0.01 : waitTime / 2.0; // seconds
+			
+			//Take the screenshot of the action (attached widget) before the execution
+			String actionPath = protocolUtil.getActionshot(state, action, actionCount()+1);
+			if(actionPath != null)
+				action.set(Tags.ScreenshotPath, actionPath);
+			
 			Util.pause(halfWait); // help for a better match of the state' actions visualization
 			action.run(system, state, settings.get(ConfigTags.ActionDuration));
 			int waitCycles = (int) (MAX_ACTION_WAIT_FRAME / halfWait);
@@ -1672,10 +1678,6 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 				actionCPU = ( CPU2[0] + CPU2[1] - CPU1[0] - CPU1[1] );
 				waitCycles--;
 			} while (actionCPU > 0 && waitCycles > 0);
-
-			String actionPath = protocolUtil.getActionshot(state, action, actionCount()+1);
-			if(actionPath != null)
-				action.set(Tags.ScreenshotPath, actionPath);
 
 			//Save the executed action information into the logs
 			saveActionInfoInLogs(state, action, "ExecutedAction");
