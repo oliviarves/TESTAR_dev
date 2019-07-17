@@ -1,9 +1,48 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ * Copyright (c) 2005, 2016, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 
-/* 
+/* Note: In addition to this header file AccessBridgeCalls.c must be compiled and
+ * linked to your application.  AccessBridgeCalls.c implements the Java Access
+ * Bridge API and also hides the complexities associated with interfacing to the
+ * associated Java Access Bridge DLL which is installed when Java is installed.
+ *
+ * AccessBridgeCalls.c is available for download from the OpenJDK repository using
+ * the following link:
+ *
+ * http://hg.openjdk.java.net/jdk9/jdk9/jdk/raw-file/tip/src/jdk.accessibility/windows/native/bridge/AccessBridgeCalls.c
+ *
+ * Also note that the API is used in the jaccessinspector and jaccesswalker tools.
+ * The source for those tools is available in the OpenJDK repository at these links:
+ *
+ * http://hg.openjdk.java.net/jdk9/jdk9/jdk/file/tip/src/jdk.accessibility/windows/native/jaccessinspector/jaccessinspector.cpp
+ * http://hg.openjdk.java.net/jdk9/jdk9/jdk/file/tip/src/jdk.accessibility/windows/native/jaccesswalker/jaccesswalker.cpp
+ *
+ *
+ */
+
+/*
  * Wrapper functions around calls to the AccessBridge DLL
  */
 
@@ -78,7 +117,7 @@ extern "C" {
     typedef BOOL (*GetAccessibleContextFromHWNDFP) (HWND window, long *vmID, AccessibleContext *ac);
     typedef HWND (*getHWNDFromAccessibleContextFP) (long vmID, AccessibleContext ac);
 
-    typedef BOOL (*GetAccessibleContextAtFP) (long vmID, AccessibleContext acParent, 
+    typedef BOOL (*GetAccessibleContextAtFP) (long vmID, AccessibleContext acParent,
                                               jint x, jint y, AccessibleContext *ac);
     typedef BOOL (*GetAccessibleContextWithFocusFP) (HWND window, long *vmID, AccessibleContext *ac);
     typedef BOOL (*GetAccessibleContextInfoFP) (long vmID, AccessibleContext ac, AccessibleContextInfo *info);
@@ -87,7 +126,7 @@ extern "C" {
 
     /* begin AccessibleTable */
     typedef BOOL (*getAccessibleTableInfoFP) (long vmID, AccessibleContext ac, AccessibleTableInfo *tableInfo);
-    typedef BOOL (*getAccessibleTableCellInfoFP) (long vmID, AccessibleTable accessibleTable, 
+    typedef BOOL (*getAccessibleTableCellInfoFP) (long vmID, AccessibleTable accessibleTable,
                                                   jint row, jint column, AccessibleTableCellInfo *tableCellInfo);
 
     typedef BOOL (*getAccessibleTableRowHeaderFP) (long vmID, AccessibleContext acParent, AccessibleTableInfo *tableInfo);
@@ -98,12 +137,12 @@ extern "C" {
 
     typedef jint (*getAccessibleTableRowSelectionCountFP) (long vmID, AccessibleTable table);
     typedef BOOL (*isAccessibleTableRowSelectedFP) (long vmID, AccessibleTable table, jint row);
-    typedef BOOL (*getAccessibleTableRowSelectionsFP) (long vmID, AccessibleTable table, jint count, 
+    typedef BOOL (*getAccessibleTableRowSelectionsFP) (long vmID, AccessibleTable table, jint count,
                                                        jint *selections);
 
     typedef jint (*getAccessibleTableColumnSelectionCountFP) (long vmID, AccessibleTable table);
     typedef BOOL (*isAccessibleTableColumnSelectedFP) (long vmID, AccessibleTable table, jint column);
-    typedef BOOL (*getAccessibleTableColumnSelectionsFP) (long vmID, AccessibleTable table, jint count, 
+    typedef BOOL (*getAccessibleTableColumnSelectionsFP) (long vmID, AccessibleTable table, jint count,
                                                           jint *selections);
 
     typedef jint (*getAccessibleTableRowFP) (long vmID, AccessibleTable table, jint index);
@@ -120,9 +159,9 @@ extern "C" {
                                              AccessibleHypertextInfo *hypertextInfo);
 
     typedef BOOL (*activateAccessibleHyperlinkFP)(long vmID, AccessibleContext accessibleContext,
-                                                  AccessibleHyperlink accessibleHyperlink); 
+                                                  AccessibleHyperlink accessibleHyperlink);
 
-    typedef jint (*getAccessibleHyperlinkCountFP)(const long vmID, 
+    typedef jint (*getAccessibleHyperlinkCountFP)(const long vmID,
                                                       const AccessibleContext accessibleContext);
 
     typedef BOOL (*getAccessibleHypertextExtFP) (const long vmID,
@@ -130,13 +169,13 @@ extern "C" {
                                                  const jint nStartIndex,
                                                  AccessibleHypertextInfo *hypertextInfo);
 
-    typedef jint (*getAccessibleHypertextLinkIndexFP)(const long vmID, 
+    typedef jint (*getAccessibleHypertextLinkIndexFP)(const long vmID,
                                                       const AccessibleHypertext hypertext,
                                                       const jint nIndex);
 
-    typedef BOOL (*getAccessibleHyperlinkFP)(const long vmID, 
+    typedef BOOL (*getAccessibleHyperlinkFP)(const long vmID,
                                              const AccessibleHypertext hypertext,
-                                             const jint nIndex, 
+                                             const jint nIndex,
                                              AccessibleHyperlinkInfo *hyperlinkInfo);
 
 
@@ -186,21 +225,21 @@ extern "C" {
     typedef AccessibleContext (*getActiveDescendentFP) (const long vmID, const AccessibleContext ac);
 
 
-    typedef BOOL (*getVirtualAccessibleNameFP) (const long vmID, const AccessibleContext accessibleContext, 
+    typedef BOOL (*getVirtualAccessibleNameFP) (const long vmID, const AccessibleContext accessibleContext,
                                              wchar_t *name, int len);
 
     typedef BOOL (*requestFocusFP) (const long vmID, const AccessibleContext accessibleContext);
 
-    typedef BOOL (*selectTextRangeFP) (const long vmID, const AccessibleContext accessibleContext, 
+    typedef BOOL (*selectTextRangeFP) (const long vmID, const AccessibleContext accessibleContext,
                                        const int startIndex, const int endIndex);
 
-    typedef BOOL (*getTextAttributesInRangeFP) (const long vmID, const AccessibleContext accessibleContext, 
-                                                const int startIndex, const int endIndex, 
+    typedef BOOL (*getTextAttributesInRangeFP) (const long vmID, const AccessibleContext accessibleContext,
+                                                const int startIndex, const int endIndex,
                                                 AccessibleTextAttributesInfo *attributes, short *len);
 
     typedef int (*getVisibleChildrenCountFP) (const long vmID, const AccessibleContext accessibleContext);
 
-    typedef BOOL (*getVisibleChildrenFP) (const long vmID, const AccessibleContext accessibleContext, 
+    typedef BOOL (*getVisibleChildrenFP) (const long vmID, const AccessibleContext accessibleContext,
                                           const int startIndex, VisibleChildrenInfo *children);
 
     typedef BOOL (*setCaretPositionFP) (const long vmID, const AccessibleContext accessibleContext, const int position);
@@ -210,17 +249,17 @@ extern "C" {
     typedef int (*getEventsWaitingFP) ();
 
     typedef struct AccessBridgeFPsTag {
-	Windows_runFP Windows_run;
+        Windows_runFP Windows_run;
 
-	SetPropertyChangeFP SetPropertyChange;
+        SetPropertyChangeFP SetPropertyChange;
 
-	SetJavaShutdownFP SetJavaShutdown;
-	SetFocusGainedFP SetFocusGained;
-	SetFocusLostFP SetFocusLost;
-	
-	SetCaretUpdateFP SetCaretUpdate;
+        SetJavaShutdownFP SetJavaShutdown;
+        SetFocusGainedFP SetFocusGained;
+        SetFocusLostFP SetFocusLost;
 
-	SetMouseClickedFP SetMouseClicked;
+        SetCaretUpdateFP SetCaretUpdate;
+
+        SetMouseClickedFP SetMouseClicked;
         SetMouseEnteredFP SetMouseEntered;
         SetMouseExitedFP SetMouseExited;
         SetMousePressedFP SetMousePressed;
@@ -246,30 +285,30 @@ extern "C" {
 
         SetPropertyTableModelChangeFP SetPropertyTableModelChange;
 
-	ReleaseJavaObjectFP ReleaseJavaObject;
+        ReleaseJavaObjectFP ReleaseJavaObject;
         GetVersionInfoFP GetVersionInfo;
 
-	IsJavaWindowFP IsJavaWindow;
-	IsSameObjectFP IsSameObject;
+        IsJavaWindowFP IsJavaWindow;
+        IsSameObjectFP IsSameObject;
         GetAccessibleContextFromHWNDFP GetAccessibleContextFromHWND;
-	getHWNDFromAccessibleContextFP getHWNDFromAccessibleContext;
-    
-	GetAccessibleContextAtFP GetAccessibleContextAt;
-	GetAccessibleContextWithFocusFP GetAccessibleContextWithFocus;
-	GetAccessibleContextInfoFP GetAccessibleContextInfo;
-	GetAccessibleChildFromContextFP GetAccessibleChildFromContext;
-	GetAccessibleParentFromContextFP GetAccessibleParentFromContext;
+        getHWNDFromAccessibleContextFP getHWNDFromAccessibleContext;
 
-	getAccessibleTableInfoFP getAccessibleTableInfo;
-	getAccessibleTableCellInfoFP getAccessibleTableCellInfo;
+        GetAccessibleContextAtFP GetAccessibleContextAt;
+        GetAccessibleContextWithFocusFP GetAccessibleContextWithFocus;
+        GetAccessibleContextInfoFP GetAccessibleContextInfo;
+        GetAccessibleChildFromContextFP GetAccessibleChildFromContext;
+        GetAccessibleParentFromContextFP GetAccessibleParentFromContext;
 
-	getAccessibleTableRowHeaderFP getAccessibleTableRowHeader;
-	getAccessibleTableColumnHeaderFP getAccessibleTableColumnHeader;
+        getAccessibleTableInfoFP getAccessibleTableInfo;
+        getAccessibleTableCellInfoFP getAccessibleTableCellInfo;
 
-	getAccessibleTableRowDescriptionFP getAccessibleTableRowDescription;
-	getAccessibleTableColumnDescriptionFP getAccessibleTableColumnDescription;
+        getAccessibleTableRowHeaderFP getAccessibleTableRowHeader;
+        getAccessibleTableColumnHeaderFP getAccessibleTableColumnHeader;
 
-	getAccessibleTableRowSelectionCountFP getAccessibleTableRowSelectionCount;
+        getAccessibleTableRowDescriptionFP getAccessibleTableRowDescription;
+        getAccessibleTableColumnDescriptionFP getAccessibleTableColumnDescription;
+
+        getAccessibleTableRowSelectionCountFP getAccessibleTableRowSelectionCount;
         isAccessibleTableRowSelectedFP isAccessibleTableRowSelected;
         getAccessibleTableRowSelectionsFP getAccessibleTableRowSelections;
 
@@ -277,36 +316,36 @@ extern "C" {
         isAccessibleTableColumnSelectedFP isAccessibleTableColumnSelected;
         getAccessibleTableColumnSelectionsFP getAccessibleTableColumnSelections;
 
-	getAccessibleTableRowFP getAccessibleTableRow;
-	getAccessibleTableColumnFP getAccessibleTableColumn;
-	getAccessibleTableIndexFP getAccessibleTableIndex;
+        getAccessibleTableRowFP getAccessibleTableRow;
+        getAccessibleTableColumnFP getAccessibleTableColumn;
+        getAccessibleTableIndexFP getAccessibleTableIndex;
 
-	getAccessibleRelationSetFP getAccessibleRelationSet;
+        getAccessibleRelationSetFP getAccessibleRelationSet;
 
         getAccessibleHypertextFP getAccessibleHypertext;
-	activateAccessibleHyperlinkFP activateAccessibleHyperlink;
+        activateAccessibleHyperlinkFP activateAccessibleHyperlink;
         getAccessibleHyperlinkCountFP getAccessibleHyperlinkCount;
         getAccessibleHypertextExtFP getAccessibleHypertextExt;
         getAccessibleHypertextLinkIndexFP getAccessibleHypertextLinkIndex;
-	getAccessibleHyperlinkFP getAccessibleHyperlink;
+        getAccessibleHyperlinkFP getAccessibleHyperlink;
 
-	getAccessibleKeyBindingsFP getAccessibleKeyBindings;
-	getAccessibleIconsFP getAccessibleIcons;
-	getAccessibleActionsFP getAccessibleActions;
-	doAccessibleActionsFP doAccessibleActions;
+        getAccessibleKeyBindingsFP getAccessibleKeyBindings;
+        getAccessibleIconsFP getAccessibleIcons;
+        getAccessibleActionsFP getAccessibleActions;
+        doAccessibleActionsFP doAccessibleActions;
 
-	GetAccessibleTextInfoFP GetAccessibleTextInfo;
-	GetAccessibleTextItemsFP GetAccessibleTextItems;
-	GetAccessibleTextSelectionInfoFP GetAccessibleTextSelectionInfo;
-	GetAccessibleTextAttributesFP GetAccessibleTextAttributes;
-	GetAccessibleTextRectFP GetAccessibleTextRect;
-	GetAccessibleTextLineBoundsFP GetAccessibleTextLineBounds;
-	GetAccessibleTextRangeFP GetAccessibleTextRange;
+        GetAccessibleTextInfoFP GetAccessibleTextInfo;
+        GetAccessibleTextItemsFP GetAccessibleTextItems;
+        GetAccessibleTextSelectionInfoFP GetAccessibleTextSelectionInfo;
+        GetAccessibleTextAttributesFP GetAccessibleTextAttributes;
+        GetAccessibleTextRectFP GetAccessibleTextRect;
+        GetAccessibleTextLineBoundsFP GetAccessibleTextLineBounds;
+        GetAccessibleTextRangeFP GetAccessibleTextRange;
 
         GetCurrentAccessibleValueFromContextFP GetCurrentAccessibleValueFromContext;
         GetMaximumAccessibleValueFromContextFP GetMaximumAccessibleValueFromContext;
         GetMinimumAccessibleValueFromContextFP GetMinimumAccessibleValueFromContext;
-    
+
         AddAccessibleSelectionFromContextFP AddAccessibleSelectionFromContext;
         ClearAccessibleSelectionFromContextFP ClearAccessibleSelectionFromContext;
         GetAccessibleSelectionFromContextFP GetAccessibleSelectionFromContext;
@@ -315,21 +354,21 @@ extern "C" {
         RemoveAccessibleSelectionFromContextFP RemoveAccessibleSelectionFromContext;
         SelectAllAccessibleSelectionFromContextFP SelectAllAccessibleSelectionFromContext;
 
-	setTextContentsFP setTextContents;
-	getParentWithRoleFP getParentWithRole;
-	getTopLevelObjectFP getTopLevelObject;
-	getParentWithRoleElseRootFP getParentWithRoleElseRoot;
-	getObjectDepthFP getObjectDepth;
-	getActiveDescendentFP getActiveDescendent;
+        setTextContentsFP setTextContents;
+        getParentWithRoleFP getParentWithRole;
+        getTopLevelObjectFP getTopLevelObject;
+        getParentWithRoleElseRootFP getParentWithRoleElseRoot;
+        getObjectDepthFP getObjectDepth;
+        getActiveDescendentFP getActiveDescendent;
 
-	getVirtualAccessibleNameFP getVirtualAccessibleName;
-	requestFocusFP requestFocus;
-	selectTextRangeFP selectTextRange;
-	getTextAttributesInRangeFP getTextAttributesInRange;
-	getVisibleChildrenCountFP getVisibleChildrenCount;
-	getVisibleChildrenFP getVisibleChildren;
-	setCaretPositionFP setCaretPosition;
-	getCaretLocationFP getCaretLocation;
+        getVirtualAccessibleNameFP getVirtualAccessibleName;
+        requestFocusFP requestFocus;
+        selectTextRangeFP selectTextRange;
+        getTextAttributesInRangeFP getTextAttributesInRange;
+        getVisibleChildrenCountFP getVisibleChildrenCount;
+        getVisibleChildrenFP getVisibleChildren;
+        setCaretPositionFP setCaretPosition;
+        getCaretLocationFP getCaretLocation;
 
         getEventsWaitingFP getEventsWaiting;
 
@@ -400,7 +439,7 @@ extern "C" {
     /**
      * Accessible Context routines
      */
-    BOOL GetAccessibleContextAt(long vmID, AccessibleContext acParent, 
+    BOOL GetAccessibleContextAt(long vmID, AccessibleContext acParent,
                                 jint x, jint y, AccessibleContext *ac);
     BOOL GetAccessibleContextWithFocus(HWND window, long *vmID, AccessibleContext *ac);
     BOOL GetAccessibleContextInfo(long vmID, AccessibleContext ac, AccessibleContextInfo *info);
@@ -421,7 +460,7 @@ extern "C" {
     /* begin AccessibleTable routines */
     BOOL getAccessibleTableInfo(long vmID, AccessibleContext acParent, AccessibleTableInfo *tableInfo);
 
-    BOOL getAccessibleTableCellInfo(long vmID, AccessibleTable accessibleTable, jint row, jint column, 
+    BOOL getAccessibleTableCellInfo(long vmID, AccessibleTable accessibleTable, jint row, jint column,
                                     AccessibleTableCellInfo *tableCellInfo);
 
     BOOL getAccessibleTableRowHeader(long vmID, AccessibleContext acParent, AccessibleTableInfo *tableInfo);
@@ -444,8 +483,8 @@ extern "C" {
     /* end AccessibleTable */
 
     /* ----- AccessibleRelationSet routines */
-    BOOL getAccessibleRelationSet(long vmID, AccessibleContext accessibleContext, 
-	                          AccessibleRelationSetInfo *relationSetInfo);
+    BOOL getAccessibleRelationSet(long vmID, AccessibleContext accessibleContext,
+                                  AccessibleRelationSetInfo *relationSetInfo);
 
     /* ----- AccessibleHypertext routines */
 
@@ -466,14 +505,14 @@ extern "C" {
      * Maps to AccessibleHypertext.getLinkCount.
      * Returns -1 on error.
      */
-    jint getAccessibleHyperlinkCount(const long vmID, 
+    jint getAccessibleHyperlinkCount(const long vmID,
                                          const AccessibleHypertext hypertext);
 
     /*
      * This method is used to iterate through the hyperlinks in a component.  It
      * returns hypertext information for a component starting at hyperlink index
      * nStartIndex.  No more than MAX_HYPERLINKS AccessibleHypertextInfo objects will
-     * be returned for each call to this method. 
+     * be returned for each call to this method.
      * Returns FALSE on error.
      */
     BOOL getAccessibleHypertextExt(const long vmID,
@@ -482,11 +521,11 @@ extern "C" {
                                    /* OUT */ AccessibleHypertextInfo *hypertextInfo);
 
     /*
-     * Returns the index into an array of hyperlinks that is associated with 
+     * Returns the index into an array of hyperlinks that is associated with
      * a character index in document; maps to AccessibleHypertext.getLinkIndex
      * Returns -1 on error.
      */
-    jint getAccessibleHypertextLinkIndex(const long vmID, 
+    jint getAccessibleHypertextLinkIndex(const long vmID,
                                          const AccessibleHypertext hypertext,
                                          const jint nIndex);
 
@@ -495,14 +534,14 @@ extern "C" {
      * Maps to AccessibleHypertext.getLink.
      * Returns FALSE on error
      */
-    BOOL getAccessibleHyperlink(const long vmID, 
+    BOOL getAccessibleHyperlink(const long vmID,
                                 const AccessibleHypertext hypertext,
-                                const jint nIndex, 
+                                const jint nIndex,
                                 /* OUT */ AccessibleHyperlinkInfo *hyperlinkInfo);
 
     /* Accessible KeyBindings, Icons and Actions */
 
-    /* 
+    /*
      * Returns a list of key bindings associated with a component.
      */
     BOOL getAccessibleKeyBindings(long vmID, AccessibleContext accessibleContext,
@@ -514,7 +553,7 @@ extern "C" {
     BOOL getAccessibleIcons(long vmID, AccessibleContext accessibleContext,
                             AccessibleIcons *icons);
 
-    /* 
+    /*
      * Returns a list of actions that a component can perform.
      */
     BOOL getAccessibleActions(long vmID, AccessibleContext accessibleContext,
@@ -546,29 +585,29 @@ extern "C" {
     BOOL setTextContents (const long vmID, const AccessibleContext accessibleContext, const wchar_t *text);
 
     /**
-     * Returns the Accessible Context with the specified role that is the 
+     * Returns the Accessible Context with the specified role that is the
      * ancestor of a given object. The role is one of the role strings
      * defined in AccessBridgePackages.h
-     * If there is no ancestor object that has the specified role, 
+     * If there is no ancestor object that has the specified role,
      * returns (AccessibleContext)0.
      */
-    AccessibleContext getParentWithRole (const long vmID, const AccessibleContext accessibleContext, 
+    AccessibleContext getParentWithRole (const long vmID, const AccessibleContext accessibleContext,
                                          const wchar_t *role);
 
     /**
-     * Returns the Accessible Context with the specified role that is the 
+     * Returns the Accessible Context with the specified role that is the
      * ancestor of a given object. The role is one of the role strings
      * defined in AccessBridgePackages.h.  If an object with the specified
-     * role does not exist, returns the top level object for the Java Window.  
+     * role does not exist, returns the top level object for the Java Window.
      * Returns (AccessibleContext)0 on error.
      */
-    AccessibleContext getParentWithRoleElseRoot (const long vmID, const AccessibleContext accessibleContext, 
+    AccessibleContext getParentWithRoleElseRoot (const long vmID, const AccessibleContext accessibleContext,
                                                  const wchar_t *role);
 
     /**
-     * Returns the Accessible Context for the top level object in 
-     * a Java Window.  This is same Accessible Context that is obtained 
-     * from GetAccessibleContextFromHWND for that window.  Returns 
+     * Returns the Accessible Context for the top level object in
+     * a Java Window.  This is same Accessible Context that is obtained
+     * from GetAccessibleContextFromHWND for that window.  Returns
      * (AccessibleContext)0 on error.
      */
     AccessibleContext getTopLevelObject (const long vmID, const AccessibleContext accessibleContext);
@@ -617,7 +656,7 @@ extern "C" {
      *
      * Bug ID 4916682 - Implement JAWS AccessibleName policy
      */
-    BOOL getVirtualAccessibleName(const long vmID, const AccessibleContext accessibleContext, 
+    BOOL getVirtualAccessibleName(const long vmID, const AccessibleContext accessibleContext,
                                wchar_t *name, int len);
 
     /**
@@ -633,16 +672,16 @@ extern "C" {
      *
      * Bug ID 4944758 - selectTextRange method needed
      */
-    BOOL selectTextRange(const long vmID, const AccessibleContext accessibleContext, const int startIndex, 
+    BOOL selectTextRange(const long vmID, const AccessibleContext accessibleContext, const int startIndex,
                          const int endIndex);
 
     /**
-     * Get text attributes between two indices.  The attribute list includes the text at the 
+     * Get text attributes between two indices.  The attribute list includes the text at the
      * start index and the text at the end index. Returns whether successful;
      *
      * Bug ID 4944761 - getTextAttributes between two indices method needed
      */
-    BOOL getTextAttributesInRange(const long vmID, const AccessibleContext accessibleContext, 
+    BOOL getTextAttributesInRange(const long vmID, const AccessibleContext accessibleContext,
                                   const int startIndex, const int endIndex,
                                   AccessibleTextAttributesInfo *attributes, short *len);
 
@@ -658,7 +697,7 @@ extern "C" {
      *
      * Bug ID 4944762- getVisibleChildren for list-like components needed
      */
-    BOOL getVisibleChildren(const long vmID, const AccessibleContext accessibleContext, 
+    BOOL getVisibleChildren(const long vmID, const AccessibleContext accessibleContext,
                             const int startIndex,
                             VisibleChildrenInfo *visibleChildrenInfo);
 
@@ -667,13 +706,13 @@ extern "C" {
      *
      * Bug ID 4944770 - setCaretPosition method needed
      */
-    BOOL setCaretPosition(const long vmID, const AccessibleContext accessibleContext, 
+    BOOL setCaretPosition(const long vmID, const AccessibleContext accessibleContext,
                           const int position);
 
     /**
      * Gets the text caret location
      */
-    BOOL getCaretLocation(long vmID, AccessibleContext ac, 
+    BOOL getCaretLocation(long vmID, AccessibleContext ac,
                           AccessibleTextRectInfo *rectInfo, jint index);
 
     /**
