@@ -61,15 +61,8 @@ extern "C" {
 
     BOOL initializeAccessBridge() {
 
-#ifdef ACCESSBRIDGE_ARCH_32 // For 32 bit AT interfacing with Java on 64 bit OS
-        theAccessBridgeInstance = LoadLibrary("WINDOWSACCESSBRIDGE-32");
-#else
-#ifdef ACCESSBRIDGE_ARCH_64 // For 64 bit AT interfacing with Java on 64 bit OS
-                theAccessBridgeInstance = LoadLibrary("WINDOWSACCESSBRIDGE-64");
-#else // For 32 bit AT interfacing with Java on 32 bit OS
-        theAccessBridgeInstance = LoadLibrary("WINDOWSACCESSBRIDGE");
-#endif
-#endif
+        theAccessBridgeInstance = LoadLibrary("WindowsAccessBridge-64.dll");
+
         if (theAccessBridgeInstance != 0) {
             LOAD_FP(Windows_run, Windows_runFP, "Windows_run");
 
