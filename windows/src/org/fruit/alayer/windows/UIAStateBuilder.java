@@ -53,10 +53,9 @@ public final class UIAStateBuilder implements StateBuilder {
 	final double timeOut; // seconds
 	transient ExecutorService executor;
 	transient long pAutomation, pCondition, pCacheRequest;
-	// begin by urueda
+
 	boolean accessBridgeEnabled;
-	String SUTProcesses; // regex
-	// end by urueda
+	String SUTProcesses;
 
 	public UIAStateBuilder(){ this(10/*seconds*/,false,"");	}
 
@@ -64,15 +63,13 @@ public final class UIAStateBuilder implements StateBuilder {
 		Assert.isTrue(timeOut > 0);
 		this.timeOut = timeOut;
 		initialize();
-		// begin by urueda
+
 		this.accessBridgeEnabled = accessBridgeEnabled;
 		this.SUTProcesses = SUTProcesses;
 		
-		System.out.println("DEBUG: UIAStateBuilder InitializeAccessBridge ...");
-		
 		if (accessBridgeEnabled)
-			new Thread(){ public void run(){ Windows.InitializeAccessBridge(); } }.start(); // based on ferpasri
-		// end by urueda
+			new Thread(){ public void run(){ Windows.InitializeAccessBridge(); } }.start();
+
 		executor = Executors.newFixedThreadPool(1);
 	}
 

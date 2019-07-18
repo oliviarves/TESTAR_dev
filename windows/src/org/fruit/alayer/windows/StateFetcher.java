@@ -387,8 +387,6 @@ public class StateFetcher implements Callable<UIAState>{
 	// by urueda (through AccessBridge)
 	private UIAElement abDescend(long hwnd, UIAElement parent, long vmid, long ac){
 		
-		System.out.println("DEBUG: StateFetcher Descending Access Bridge");
-		
 		UIAElement modalElement = null;
 
 		long[] vmidAC;
@@ -408,8 +406,6 @@ public class StateFetcher implements Callable<UIAState>{
 					   height 		 = (String) props[6],
 					   indexInParent = (String) props[7],
 					   childrenCount = (String) props[8];
-				
-				System.out.println("DEBUG: StateFetcher Element: " + role);
 
 				Rect rect = null;
 				try {
@@ -425,11 +421,11 @@ public class StateFetcher implements Callable<UIAState>{
 				parent.children.add(el);
 				el.rect = rect;
 
-				el.hwnd = Windows.GetHWNDFromAccessibleContext(vmidAC[0],vmidAC[1]);
 				if (role.equals(AccessBridgeControlTypes.ACCESSIBLE_DIALOG)){
 					el.isTopLevelContainer = true;
 					modalElement = el;
 				}
+				
 				el.ctrlId = AccessBridgeControlTypes.toUIA(role);				
 				if (el.ctrlId == Windows.UIA_MenuControlTypeId) // || el.ctrlId == Windows.UIA_WindowControlTypeId)
 					el.isTopLevelContainer = true;
@@ -438,8 +434,13 @@ public class StateFetcher implements Callable<UIAState>{
 				el.name = name;				
 				el.helpText = description;
 				// el.enabled = true;
-				parent.root.hwndMap.put(el.hwnd, el);
 				
+				//TODO: Check ISSUE with JDK_12
+				//el.hwnd = Windows.GetHWNDFromAccessibleContext(vmidAC[0],vmidAC[1]);
+				
+				el.hwnd = Windows.IUIAutomationElement_get_NativeWindowHandle(uiaCacheWindowTree(hwnd), true);
+
+				parent.root.hwndMap.put(el.hwnd, el);
 				
 				//MenuItems are duplicate with AccessBridge when we open one Menu or combo box
 				if(!role.equals("menu") && !role.equals("combo box")
