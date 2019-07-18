@@ -64,6 +64,8 @@ extern "C" {
         theAccessBridgeInstance = LoadLibrary("WindowsAccessBridge-64.dll");
 
         if (theAccessBridgeInstance != 0) {
+			printf("DEBUG: Library Access Bridge LOADING... \n");
+			
             LOAD_FP(Windows_run, Windows_runFP, "Windows_run");
 
             LOAD_FP(SetJavaShutdown, SetJavaShutdownFP, "setJavaShutdownFP");
@@ -205,8 +207,12 @@ extern "C" {
             theAccessBridge.Windows_run();
 
             theAccessBridgeInitializedFlag = TRUE;
+			
+			printf("DEBUG: Library Access Bridge LOADED \n");
+			
             return TRUE;
         } else {
+			printf("DEBUG: Cannot load the windows access bridge library \n");
             return FALSE;
         }
     }

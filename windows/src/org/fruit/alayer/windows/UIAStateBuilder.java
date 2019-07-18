@@ -67,6 +67,9 @@ public final class UIAStateBuilder implements StateBuilder {
 		// begin by urueda
 		this.accessBridgeEnabled = accessBridgeEnabled;
 		this.SUTProcesses = SUTProcesses;
+		
+		System.out.println("DEBUG: UIAStateBuilder InitializeAccessBridge ...");
+		
 		if (accessBridgeEnabled)
 			new Thread(){ public void run(){ Windows.InitializeAccessBridge(); } }.start(); // based on ferpasri
 		// end by urueda

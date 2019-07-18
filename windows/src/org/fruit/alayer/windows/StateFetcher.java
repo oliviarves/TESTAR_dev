@@ -386,6 +386,9 @@ public class StateFetcher implements Callable<UIAState>{
 	
 	// by urueda (through AccessBridge)
 	private UIAElement abDescend(long hwnd, UIAElement parent, long vmid, long ac){
+		
+		System.out.println("DEBUG: StateFetcher Descending Access Bridge");
+		
 		UIAElement modalElement = null;
 
 		long[] vmidAC;
@@ -405,6 +408,8 @@ public class StateFetcher implements Callable<UIAState>{
 					   height 		 = (String) props[6],
 					   indexInParent = (String) props[7],
 					   childrenCount = (String) props[8];
+				
+				System.out.println("DEBUG: StateFetcher Element: " + role);
 
 				Rect rect = null;
 				try {
