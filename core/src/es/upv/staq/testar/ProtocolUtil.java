@@ -228,8 +228,13 @@ public class ProtocolUtil {
 	//  Screenshots helpers
 	// #####################
 	
-	public String getStateshot(State state, int stateCount){
+	public String getStateshot(State state){
 		return ScreenshotSerialiser.saveStateShot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), 
+				getStateshotBinary(state));
+	}
+	
+	public String getAllStateshot(State state, int stateCount){
+		return ScreenshotSerialiser.saveAllStateShot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), 
 				getStateshotBinary(state), stateCount);
 	}
 
@@ -256,7 +261,7 @@ public class ProtocolUtil {
 		return scrshot;
 	}
 	
-	public String getActionshot(State state, Action action, int actionCount){
+	public String getActionshot(State state, Action action, int actionCount, boolean extended){
 		List<Finder> targets = action.get(Tags.Targets, null);
 		if (targets != null){
 			Widget w;
@@ -273,8 +278,13 @@ public class ProtocolUtil {
 				return null;
 			AWTCanvas scrshot = AWTCanvas.fromScreenshot(Rect.from(actionArea.x, actionArea.y, actionArea.width, actionArea.height),
 														 AWTCanvas.StorageFormat.PNG, 1);
-			return ScreenshotSerialiser.saveActionShot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), 
+			
+			if(extended)
+				return ScreenshotSerialiser.saveAllActionShot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), 
 					action.get(Tags.ConcreteID, "NoConcreteIdAvailable"), scrshot, actionCount);
+			else
+				return ScreenshotSerialiser.saveActionShot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), 
+						action.get(Tags.ConcreteID, "NoConcreteIdAvailable"), scrshot);
 		}
 		return null;
 	}

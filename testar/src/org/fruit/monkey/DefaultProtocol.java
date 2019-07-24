@@ -1449,8 +1449,12 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 
 		Shape viewPort = state.get(Tags.Shape, null);
 		if(viewPort != null){
-			//AWTCanvas scrShot = AWTCanvas.fromScreenshot(Rect.from(viewPort.x(), viewPort.y(), viewPort.width(), viewPort.height()), AWTCanvas.StorageFormat.PNG, 1);
-			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state, 0));
+			//ExtendedScreenshot is an option to take a Screenshot after every Action
+			if(settings.get(ConfigTags.ExtendedScreenshots, false))
+				state.set(Tags.ScreenshotPath, protocolUtil.getAllStateshot(state, 0));
+			//If not, we will take a Screenshot only if the State ID changes
+			else
+				state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state));
 		}
 
 		calculateZIndices(state);
@@ -1502,7 +1506,12 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 	private void setStateScreenshot(State state) {
 		Shape viewPort = state.get(Tags.Shape, null);
 		if(viewPort != null){
-			state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state, actionCount()));
+			//ExtendedScreenshot is an option to take a Screenshot after every Action
+			if(settings.get(ConfigTags.ExtendedScreenshots, false))
+				state.set(Tags.ScreenshotPath, protocolUtil.getAllStateshot(state, actionCount()));
+			//If not, we will take a Screenshot only if the State ID changes
+			else
+				state.set(Tags.ScreenshotPath, protocolUtil.getStateshot(state));
 		}
 	}
 
@@ -1663,7 +1672,11 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 			double halfWait = waitTime == 0 ? 0.01 : waitTime / 2.0; // seconds
 			
 			//Take the screenshot of the action (attached widget) before the execution
-			String actionPath = protocolUtil.getActionshot(state, action, actionCount()+1);
+			
+			//ExtendedScreenshot is an option to take a Screenshot of all Actions
+			//IF not, we will only take a Screenshot of an Action if the ID changes
+			String actionPath = protocolUtil.getActionshot(state, action, actionCount()+1, settings.get(ConfigTags.ExtendedScreenshots, false));
+			
 			if(actionPath != null)
 				action.set(Tags.ScreenshotPath, actionPath);
 			

@@ -120,7 +120,7 @@ public class Protocol_desktop_simple_stategraph_sikulix extends DesktopProtocol 
 			//System.out.println("DEBUG: action: "+action.toString());
 			//System.out.println("DEBUG: action short: "+action.toShortString());
 			if(action.toShortString().equalsIgnoreCase("LeftClickAt")){
-				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount(), settings.get(ConfigTags.ExtendedScreenshots, false));
 				action.set(Tags.ScreenshotPath, widgetScreenshotPath);
 				Screen sikuliScreen = new Screen();
 				try {
@@ -138,7 +138,7 @@ public class Protocol_desktop_simple_stategraph_sikulix extends DesktopProtocol 
 			}else if(action.toShortString().contains("ClickTypeInto(")){
 				String textToType = action.toShortString().substring(action.toShortString().indexOf("("), action.toShortString().indexOf(")"));
 				//System.out.println("parsed text:"+textToType);
-				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount(), settings.get(ConfigTags.ExtendedScreenshots, false));
 				Util.pause(halfWait);
 				Screen sikuliScreen = new Screen();
 				try {

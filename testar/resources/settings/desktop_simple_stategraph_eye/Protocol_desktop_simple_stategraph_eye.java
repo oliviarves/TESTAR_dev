@@ -123,7 +123,7 @@ public class Protocol_desktop_simple_stategraph_eye extends DesktopProtocol {
 			//System.out.println("DEBUG: action: "+action.toString());
 			//System.out.println("DEBUG: action short: "+action.toShortString());
 			if(action.toShortString().equalsIgnoreCase("LeftClickAt")){
-				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount(), settings.get(ConfigTags.ExtendedScreenshots, false));
 				action.set(Tags.ScreenshotPath, widgetScreenshotPath);
 				Eye eye = new Eye();
 				try {
@@ -143,7 +143,7 @@ public class Protocol_desktop_simple_stategraph_eye extends DesktopProtocol {
 			}else if(action.toShortString().contains("ClickTypeInto(")){
 				String textToType = action.toShortString().substring(action.toShortString().indexOf("("), action.toShortString().indexOf(")"));
 				//System.out.println("parsed text:"+textToType);
-				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount());
+				String widgetScreenshotPath = protocolUtil.getActionshot(state, action, actionCount(), settings.get(ConfigTags.ExtendedScreenshots, false));
 				Util.pause(halfWait);
 				Eye eye = new Eye();
 				try {

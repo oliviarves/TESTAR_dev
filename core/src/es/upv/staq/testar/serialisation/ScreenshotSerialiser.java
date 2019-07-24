@@ -117,8 +117,18 @@ public class ScreenshotSerialiser extends Thread {
 			testSequenceFolder.notifyAll();
 		}
 	}
-
-	public static String saveStateShot(String stateID, AWTCanvas stateshot, int stateCount){
+	
+	public static String saveStateShot(String stateID, AWTCanvas stateshot){
+		
+		String statePath = scrshotOutputFolder + File.separator + testSequenceFolder + File.separator + stateID + ".png";
+	
+		if (!new File(statePath).exists())
+			savethis(statePath,stateshot);
+		
+		return statePath;
+	}
+	
+	public static String saveAllStateShot(String stateID, AWTCanvas stateshot, int stateCount){
 		
 		String statePath = scrshotOutputFolder + File.separator + testSequenceFolder + File.separator 
 				+ "State_" + stateCount + "_" + stateID + ".png";
@@ -129,7 +139,17 @@ public class ScreenshotSerialiser extends Thread {
 		return statePath;
 	}
 
-	public static String saveActionShot(String stateID, String actionID, final AWTCanvas actionshot, int actionCount){
+	public static String saveActionShot(String stateID, String actionID, final AWTCanvas actionshot){
+		
+		String actionPath = scrshotOutputFolder + File.separator + testSequenceFolder + File.separator + stateID + "_" + actionID + ".png";
+		
+		if (!new File(actionPath).exists())
+			savethis(actionPath,actionshot);
+		
+		return actionPath;
+	}
+	
+	public static String saveAllActionShot(String stateID, String actionID, final AWTCanvas actionshot, int actionCount){
 		
 		String actionPath = scrshotOutputFolder + File.separator + testSequenceFolder + File.separator 
 				+ "Action_" + actionCount + "_" + actionID + "_" + stateID + ".png";
