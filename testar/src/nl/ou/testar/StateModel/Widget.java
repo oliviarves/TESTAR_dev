@@ -44,14 +44,12 @@ public class Widget {
      * @param value
      */
     public void addAttribute(Tag attribute, Object value) {
-        try {
-        	if(attribute.name().contains("Title") || attribute.name().contains("Path") ||
-					attribute.name().contains("Enabled")  || attribute.name().contains("Role") ) {
-				attributes.set(attribute, value);
-			}
-        } catch (Exception e) {
-            System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
-        }
+    	try {
+    		attributes.set(attribute, value);
+    		
+    	} catch (Exception e) {
+    		System.out.println("Problem adding value for tag " + attribute.name() + " to abstract state");
+    	}
     }
 
     /**
