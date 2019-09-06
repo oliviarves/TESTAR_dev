@@ -173,7 +173,7 @@ public final class WdState extends WdWidget implements State {
     	ret = w.element.cssClasses.toString();
     }
     else if (t.equals(WdTags.WebOrientation)) {
-      ret = 0;
+      ret = (long)0;
     }
     else if (t.equals(Tags.ZIndex)) {
       ret = w.element.zindex;
