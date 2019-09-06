@@ -30,6 +30,7 @@
 
 package nl.ou.testar.StateModel.Settings;
 
+import es.upv.staq.testar.CodingManager;
 import es.upv.staq.testar.StateManagementTags;
 import nl.ou.testar.StateModel.Analysis.AnalysisManager;
 import nl.ou.testar.StateModel.Analysis.HttpServer.JettyServer;
@@ -67,6 +68,7 @@ public class StateModelPanel extends JPanel {
     private JLabel label12 = new JLabel("AccessBridge enabled");
     private JLabel label13 = new JLabel("DataStoreDirectory");
     private JLabel label14 = new JLabel();
+    private JLabel label15 = new JLabel("Action selection");
 
 
     private JCheckBox stateModelEnabledChkBox = new JCheckBox();
@@ -77,6 +79,7 @@ public class StateModelPanel extends JPanel {
     private JPasswordField dataStorePasswordfield = new JPasswordField();
     private JCheckBox resetDatabaseCheckbox = new JCheckBox();
     private JComboBox<String> dataStoreModeBox = new JComboBox<>(new String[]{"none", "instant", "delayed", "hybrid"});
+    private JComboBox<String> actionSelectionBox = new JComboBox<>(new String[]{"Random selection", "Unvisited actions first"});
     private JComboBox<String> dataStoreTypeBox = new JComboBox<>(new String[]{"remote", "plocal"});
     private Set<JComponent> components;
     private JCheckBox accessBridgeEnabledBox = new JCheckBox();
@@ -125,6 +128,7 @@ public class StateModelPanel extends JPanel {
         components.add(dirButton);
         components.add(analysisButton);
         components.add(stateTagsButton);
+        components.add(actionSelectionBox);
 
         // add the components to the panel
         setLayout(null);
@@ -218,7 +222,7 @@ public class StateModelPanel extends JPanel {
         });
         add(analysisButton);
 
-        stateTagsButton.setBounds(330, 242, 150, 27);
+        stateTagsButton.setBounds(330, 166, 150, 27);
         stateTagsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -227,7 +231,12 @@ public class StateModelPanel extends JPanel {
         });
         add(stateTagsButton);
 
-        label14.setBounds(330, 280, 300, 27);
+        label15.setBounds(330,204,100,27);
+        add(label15);
+        actionSelectionBox.setBounds(430, 204,175,27);
+        add(actionSelectionBox);
+
+        label14.setBounds(330, 242, 300, 27);
         add(label14);
 
     }
@@ -275,6 +284,20 @@ public class StateModelPanel extends JPanel {
         else {
             selectedStateManagementTags = new Tag<?>[0];
         }
+
+        // for now, only two options, so we'll do this the quick and easy way, without creating a list model
+        String currentAlgorithm = settings.get(ConfigTags.ActionSelectionAlgorithm);
+        for (int i =0; i < actionSelectionBox.getItemCount(); i++) {
+            if (actionSelectionBox.getItemAt(i).equals("Random selection") && currentAlgorithm.equals("random")) {
+                actionSelectionBox.setSelectedIndex(i);
+                break;
+            }
+            if (actionSelectionBox.getItemAt(i).equals("Unvisited actions first") && currentAlgorithm.equals("unvisited")) {
+                actionSelectionBox.setSelectedIndex(i);
+                break;
+            }
+        }
+
     }
 
     /**
@@ -294,6 +317,14 @@ public class StateModelPanel extends JPanel {
         settings.set(ConfigTags.ResetDataStore, resetDatabaseCheckbox.isSelected());
         settings.set(ConfigTags.AccessBridgeEnabled, accessBridgeEnabledBox.isSelected());
         settings.set(ConfigTags.AbstractStateAttributes, Arrays.stream(selectedStateManagementTags).map(StateManagementTags::getSettingsStringFromTag).collect(Collectors.toList()));
+        switch ((String) actionSelectionBox.getSelectedItem()) {
+            case "Unvisited actions first":
+                settings.set(ConfigTags.ActionSelectionAlgorithm, "unvisited");
+                break;
+
+            default:
+                settings.set(ConfigTags.ActionSelectionAlgorithm, "random");
+        }
     }
 
     /**
@@ -308,16 +339,19 @@ public class StateModelPanel extends JPanel {
         return  result.toString();
     }
 
+    // make sure the right text fields are enabled based on the selected data store type (remote or local)
     private void checkDataType() {
-        dataStoreServerTextfield.setEnabled(dataStoreTypeBox.getSelectedItem().equals("remote"));
+        dataStoreServerTextfield.setEnabled(dataStoreTypeBox.getSelectedItem().equals("remote") && stateModelEnabledChkBox.isSelected());
         dataStoreDirectoryField.setEnabled(dataStoreTypeBox.getSelectedItem().equals("plocal"));
         dirButton.setEnabled(dataStoreTypeBox.getSelectedItem().equals("plocal"));
     }
 
+    // helper method to ensure that the state model enabled box is selected
     private void checkAnalysisButtonActive() {
         analysisButton.setEnabled(stateModelEnabledChkBox.isSelected());
     }
 
+    // show a file dialog to choose the directory where the local install of OrientDB is located
     private void chooseFileActionPerformed(ActionEvent evt) {
         JFileChooser fd = new JFileChooser();
         fd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -331,6 +365,7 @@ public class StateModelPanel extends JPanel {
         }
     }
 
+    // this helper method will start a jetty integrated server and show the model listings page
     private void openServer() {
         try {
             label14.setText("");
@@ -355,7 +390,7 @@ public class StateModelPanel extends JPanel {
     }
 
     private void openStateTagSelection() {
-        stateTagsDialog = new AbstractStateSettings(allStateManagementTags, selectedStateManagementTags);
+        stateTagsDialog = new AbstractStateSettings(allStateManagementTags, selectedStateManagementTags, CodingManager.getDefaultAbstractStateTags());
         stateTagsDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

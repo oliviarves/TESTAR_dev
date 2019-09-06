@@ -51,7 +51,10 @@ import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.fruit.alayer.windows.UIATags;
 
 import static java.lang.System.exit;
@@ -452,6 +455,7 @@ public class Main {
 			defaults.add(Pair.from(ResetDataStore, false));
 			defaults.add(Pair.from(ApplicationName, ""));
 			defaults.add(Pair.from(ApplicationVersion, ""));
+			defaults.add(Pair.from(ActionSelectionAlgorithm, "random"));
 			defaults.add(Pair.from(AlwaysCompile, true));
 			defaults.add(Pair.from(ProcessListenerEnabled, false));
 			defaults.add(Pair.from(SuspiciousProcessOutput, "(?!x)x"));
@@ -640,15 +644,14 @@ public class Main {
 		}
 	}
 
-    /**
-     * This method initializes the coding manager with custom tags to use for constructing
-     * concrete and abstract state ids, if provided of course.
-     * @param settings
-     */
-    private static void initCodingManager(Settings settings) {
-        // we look if there are user-provided custom state tags in the settings
-        // if so, we provide these to the coding manager
-        int i;
+	/**
+	 * This method initializes the coding manager with custom tags to use for constructing
+	 * concrete and abstract state ids, if provided of course.
+	 * @param settings
+	 */
+	private static void initCodingManager(Settings settings) {
+		// we look if there are user-provided custom state tags in the settings
+		// if so, we provide these to the coding manager
 
         Set<Tag<?>> stateManagementTags = StateManagementTags.getAllTags();
         // for the concrete state tags we use all the state management tags that are available
@@ -658,7 +661,7 @@ public class Main {
 
         // then the attributes for the abstract state id
         if (!settings.get(ConfigTags.AbstractStateAttributes).isEmpty()) {
-            Tag<?>[] abstractTags = settings.get(AbstractStateAttributes).stream().map(StateManagementTags::getTagFromSettingsString).filter(tag -> tag != null).toArray(Tag<?>[]::new);
+            Tag<?>[] abstractTags = settings.get(AbstractStateAttributes).stream().map(StateManagementTags::getTagFromSettingsString).filter(Objects::nonNull).toArray(Tag<?>[]::new);
             CodingManager.setCustomTagsForAbstractId(abstractTags);
         }
     }

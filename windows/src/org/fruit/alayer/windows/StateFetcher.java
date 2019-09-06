@@ -34,10 +34,13 @@
  */
 package org.fruit.alayer.windows;
 
+import es.upv.staq.testar.StateManagementTags;
 import org.fruit.Util;
 import org.fruit.alayer.*;
 
 import java.awt.*;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -50,26 +53,28 @@ public class StateFetcher implements Callable<UIAState>{
 	private final SUT system;
 
 	transient long automationPointer, cacheRequestPointer;
-	// begin by urueda
+
 	private boolean releaseCachedAutomatinElement;
 	
 	private boolean accessBridgeEnabled;
 	
 	private static Pattern sutProcessesMatcher;
-	// end by urueda
+
+	private List<Map<String , String>> mappedValues;
+
 	
 	public StateFetcher(SUT system, long automationPointer, long cacheRequestPointer,
 						boolean accessBridgeEnabled, String SUTProcesses){		
 		this.system = system;
 		this.automationPointer = automationPointer;
 		this.cacheRequestPointer = cacheRequestPointer;
-		// begin by urueda
 		this.accessBridgeEnabled = accessBridgeEnabled;
 		if (SUTProcesses == null || SUTProcesses.isEmpty())
 			StateFetcher.sutProcessesMatcher = null;
 		else
-			StateFetcher.sutProcessesMatcher = Pattern.compile(SUTProcesses, Pattern.UNICODE_CHARACTER_CLASS);		
-		// end by urueda
+			StateFetcher.sutProcessesMatcher = Pattern.compile(SUTProcesses, Pattern.UNICODE_CHARACTER_CLASS);
+
+		mappedValues = new ArrayList<>();
 	}
 	
 	// by urueda (refactor)
@@ -93,6 +98,7 @@ public class StateFetcher implements Callable<UIAState>{
 		// first build the UIAElement skeleton.
 		// this means fetching information from the Windows Automation API about all the elements in the Automation Tree
 		UIARootElement uiaRoot = buildSkeleton(system);
+//		writeToCSV(mappedValues);
 
 		// next we use the created Automation tree, with the uiaRoot as its base, to create the Testar widget tree
 		UIAState root = createWidgetTree(uiaRoot);
@@ -358,9 +364,19 @@ public class StateFetcher implements Callable<UIAState>{
 			// if a pattern is present, we also want to store the properties that are specific to that pattern
 			if (uiaElement.get(availabilityTag)) {
 				UIATags.getChildTags(availabilityTag).stream().filter(UIATags::tagIsActive).forEach(patternPropertyTag -> {
+					if (patternPropertyTag.equals(UIATags.UIAValueValue)) {
+						// this property for some reason cannot be retrieved using the getCurrentPropertyValue method
+						// that is why we use the value that was directly received
+						uiaElement.set(UIATags.UIAValueValue, uiaElement.valuePattern);
+					}
 					Object propertyObject = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, UIAMapping.getPatternPropertyIdentifier(patternPropertyTag), true);
 					if (propertyObject != null) {
-						setConvertedObjectValue(patternPropertyTag, object, uiaElement);
+						try {
+							setConvertedObjectValue(patternPropertyTag, propertyObject, uiaElement);
+						} catch (Exception e) {
+							System.out.println("Exception while setting tag " + patternPropertyTag.name());
+							System.out.println(e.getMessage());
+						}
 					}
 				});
 			}
@@ -425,8 +441,40 @@ public class StateFetcher implements Callable<UIAState>{
 //		System.out.println(uiaElement.get(UIATags.UIAFullDescription));
 		uiaElement.set(UIATags.UIACulture, Windows.IUIAutomationElement_get_Culture(uiaCachePointer, true));
 		uiaElement.set(UIATags.UIAProcessId, Windows.IUIAutomationElement_get_ProcessId(uiaCachePointer, true));
-		obj = Windows.IUIAutomationElement_GetPropertyValueEx(uiaCachePointer, Windows.UIA_IsWindowPatternAvailablePropertyId, true, true);
-		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsWindowPatternAvailablePropertyId, true); //true);
+		uiaElement.set(UIATags.UIAIsOffscreen, Windows.IUIAutomationElement_get_IsOffscreen(uiaCachePointer, true));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_AriaPropertiesPropertyId, true);
+		uiaElement.set(UIATags.UIAAriaProperties, obj instanceof String ? (String)obj : "");
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_AriaRolePropertyId, true);
+		uiaElement.set(UIATags.UIAAriaRole, obj instanceof String ? (String) obj : "");
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsDataValidForFormPropertyId, true);
+		uiaElement.set(UIATags.UIAIsDataValidForForm, obj instanceof Boolean && ((Boolean) obj));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsDialogPropertyId, true);
+		uiaElement.set(UIATags.UIAIsDialog, obj instanceof Boolean && ((Boolean) obj));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsPasswordPropertyId, true);
+		uiaElement.set(UIATags.UIAIsPassword, obj instanceof Boolean && ((Boolean) obj));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsPeripheralPropertyId, true);
+		uiaElement.set(UIATags.UIAIsPeripheral, obj instanceof Boolean && ((Boolean) obj));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_IsRequiredForFormPropertyId, true);
+		uiaElement.set(UIATags.UIAIsRequiredForForm, obj instanceof Boolean && ((Boolean) obj));
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_LabeledByPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIALabeledBy, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_LandmarkTypePropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIALandmarkType, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_LocalizedLandmarkTypePropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIALocalizedLandmarkType, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_LevelPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIALevel, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_LiveSettingPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIALiveSetting, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_PositionInSetPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIAPositionInSet, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_SizeOfSetPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIASizeOfSet, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_RotationPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIARotation, obj, uiaElement);
+		obj = Windows.IUIAutomationElement_GetCurrentPropertyValue(uiaCachePointer, Windows.UIA_VisualEffectsPropertyId, true);
+		setObjectValueIfNotNull(UIATags.UIAVisualEffects, obj, uiaElement);
+
 
 
 
@@ -455,6 +503,9 @@ public class StateFetcher implements Callable<UIAState>{
 			}
 			Windows.IUnknown_Release(uiaChildrenPointer);
 		}
+
+		// add to csv for analysis purposed
+//		mappedValues.add(extractTagsForCsv(uiaElement));
 		
 		return modalElement; // by urueda
 	}
@@ -601,6 +652,12 @@ public class StateFetcher implements Callable<UIAState>{
 			createWidgetTree(w, child);
 	}
 
+	private <T> void setObjectValueIfNotNull(Tag<T> tag, Object object, UIAElement uiaElement) {
+		if (object != null) {
+			uiaElement.set(tag, (T) object);
+		}
+	}
+
 	private <T> void setConvertedObjectValue(Tag<T> tag, Object object, UIAElement uiaElement) {
 		Stream<Tag<?>> tagsToWatch = Stream.of(
 			UIATags.UIADropTargetDropTargetEffects,
@@ -628,11 +685,130 @@ public class StateFetcher implements Callable<UIAState>{
 		if (tag.equals(UIATags.UIADragDropEffects)) {
 			// array of strings...convert to a single string
 			if (object instanceof String[]) {
-				uiaElement.set(tag, (T) Arrays.toString((String[])object));
+				uiaElement.set(tag, (T)String.join(", ", (String[])object));
+			}
+			else if (object instanceof String) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIADragGrabbedItems)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIADropTargetDropTargetEffects)) {
+			// array of strings...convert to a single string
+			if (object instanceof String[]) {
+				uiaElement.set(tag, (T)String.join(", ", (String[])object));
+			}
+			else if (object instanceof String) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIALegacyIAccessibleSelection)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIAMultipleViewSupportedViews)) {
+			if (object instanceof Long[]) {
+				uiaElement.set(tag, (T) Arrays.stream((Long[])object).map(Object::toString).reduce("", (base, string) -> base.equals("") ? string : base + ", " + string));
+			}
+		}
+		else if (tag.equals(UIATags.UIASelectionSelection)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIASpreadsheetItemAnnotationObjects)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIASpreadsheetItemAnnotationTypes)) {
+			if (object instanceof Long[]) {
+				uiaElement.set(tag, (T) Arrays.stream((Long[])object).map(Object::toString).reduce("", (base, string) -> base.equals("") ? string : base + ", " + string));
+			}
+		}
+		else if (tag.equals(UIATags.UIATableColumnHeaders)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIATableRowHeaders)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIATableItemColumnHeaderItems)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
+		}
+		else if (tag.equals(UIATags.UIATableItemRowHeaderItems)) {
+			// not sure what vt_unknown will translate into, so we just leave it as object for now
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
 			}
 		}
 		else {
-			uiaElement.set(tag, (T) object);
+			if (object != null) {
+				uiaElement.set(tag, (T) object);
+			}
 		}
+	}
+
+	private Map<String, String> extractTagsForCsv(UIAElement uiaElement) {
+		List<Tag<?>> stateTags = StateManagementTags.getAllTags().stream().map(UIAMapping::getMappedStateTag).collect(Collectors.toList());
+		return stateTags.stream().collect(Collectors.toMap(Tag::name, tag -> uiaElement.get(tag, null) != null ? uiaElement.get(tag, null).toString() : "null"));
+	}
+
+	public void writeToCSV(List<Map<String, String>> valuesToExport) {
+		List<String> linesToExport = new ArrayList<>();
+
+		// title row:
+		List<Tag<?>> stateTags = StateManagementTags.getAllTags().stream().map(UIAMapping::getMappedStateTag).sorted(Comparator.comparing(Tag::name)).collect(Collectors.toList());
+		String titleRowString = convertToCSV(stateTags.stream().map(Tag::name).toArray(String[]::new));
+		linesToExport.add(titleRowString);
+
+		for(Map<String, String> valueMapping : valuesToExport) {
+			// follow the stateTags list order
+			String[] line = stateTags.stream().map(tag -> valueMapping.getOrDefault(tag.name(),null) == null ? "null" : valueMapping.get(tag.name())).toArray(String[]::new);
+			linesToExport.add(convertToCSV(line));
+		}
+
+		File csvOutputFile = new File("widgetUIAOutput.csv");
+		try {
+			PrintWriter printWriter = new PrintWriter(csvOutputFile);
+			linesToExport.stream().forEach(printWriter::println);
+			printWriter.flush();
+			printWriter.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String convertToCSV(String[] data) {
+		return Stream.of(data)
+				.map(this::escapeSpecialCharacters)
+				.collect(Collectors.joining(";"));
+	}
+
+	public String escapeSpecialCharacters(String data) {
+		String escapedData = data.replaceAll("\\R", " ");
+		if (data.contains(",") || data.contains("\"") || data.contains("'")) {
+			data = data.replace("\"", "\"\"");
+			escapedData = "\"" + data + "\"";
+		}
+		escapedData = escapedData.replaceAll(";", "^");
+		return escapedData;
 	}
 }

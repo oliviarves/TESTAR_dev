@@ -36,7 +36,6 @@ package org.fruit.alayer.windows;
 
 import org.fruit.alayer.Rect;
 import org.fruit.alayer.Tag;
-import org.fruit.alayer.Tags;
 import org.fruit.alayer.TagsBase;
 
 import java.util.HashMap;
@@ -44,8 +43,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static es.upv.staq.testar.StateManagementTags.*;
 
 public final class UIATags extends TagsBase {
 	
@@ -431,7 +428,7 @@ public final class UIATags extends TagsBase {
 	 * Variant type: VT_UNKNOWN
 	 * Default value: NULL
 	 */
-	public static final Tag<Long> UIALabeledBy = from("UIALabeledBy", Long.class);
+	public static final Tag<Object> UIALabeledBy = from("UIALabeledBy", Object.class);
 
 	/**
 	 * Is the widget/uiaelement part of a landmark/group?
@@ -616,11 +613,6 @@ public final class UIATags extends TagsBase {
 	Variant type: VT_R8 | VT_ARRAY
 	Default value: VT_EMPTY
 
-
-
-
-
-
 	 */
 	
 	////////// PATTERN AVAILABILITY PROPERTIES ////////////
@@ -664,7 +656,7 @@ public final class UIATags extends TagsBase {
 	public static final Tag<String>	UIAAnnotationAnnotationTypeName = from("UIAAnnotationAnnotationTypeName", String.class);
 	public static final Tag<String>	UIAAnnotationAuthor = from("UIAAnnotationAuthor", String.class);
 	public static final Tag<String> UIAAnnotationDateTime = from("UIAAnnotationDateTime", String.class);
-	public static final Tag<Long> UIAnnotationTarget = from("UIAnnotationTarget", Long.class);
+	public static final Tag<Long> UIAAnnotationTarget = from("UIAAnnotationTarget", Long.class);
 
 	// dock pattern
 	public static final Tag<Long> UIADockDockPosition = from("UIADockDockPosition ", Long.class); // check
@@ -673,7 +665,7 @@ public final class UIATags extends TagsBase {
 	public static final Tag<String> UIADragDropEffect = from("UIADragDropEffect", String.class);
 	public static final Tag<String> UIADragDropEffects = from("UIADragDropEffects", String.class); // array
 	public static final Tag<Boolean> UIADragIsGrabbed = from("UIADragIsGrabbed", Boolean.class);
-	public static final Tag<Long> UIADragGrabbedItems = from("UIADragGrabbedItems", Long.class); // array
+	public static final Tag<Object> UIADragGrabbedItems = from("UIADragGrabbedItems", Object.class); // array
 
 	// drop target control pattern
 	public static final Tag<String> UIADropTargetDropTargetEffect = from("UIADropTargetDropTargetEffect", String.class);
@@ -701,26 +693,26 @@ public final class UIATags extends TagsBase {
 	public static final Tag<String> UIALegacyIAccessibleKeyboardShortcut = from("UIALegacyIAccessibleKeyboardShortcut", String.class);
 	public static final Tag<String> UIALegacyIAccessibleName = from("UIALegacyIAccessibleName", String.class);
 	public static final Tag<Long> UIALegacyIAccessibleRole = from("UIALegacyIAccessibleRole", Long.class);
-	public static final Tag<Long> UIALegacyIAccessibleSelection = from("UIALegacyIAccessibleSelection", Long.class); // list/array
+	public static final Tag<Object> UIALegacyIAccessibleSelection = from("UIALegacyIAccessibleSelection", Object.class); // list/array
 	public static final Tag<Long> UIALegacyIAccessibleState = from("UIALegacyIAccessibleState", Long.class);
 	public static final Tag<String> UIALegacyIAccessibleValue = from("UIALegacyIAccessibleValue", String. class);
 
 	// MultipleView control pattern
 	public static final Tag<Long> UIAMultipleViewCurrentView = from("UIAMultipleViewCurrentView", Long.class);
-	public static final Tag<Long> UIAMultipleViewSupportedViews = from("UIAMultipleViewSupportedViews", Long.class); // array
+	public static final Tag<String> UIAMultipleViewSupportedViews = from("UIAMultipleViewSupportedViews", String.class); // array
 
 	// range value control pattern
 	public static final Tag<Boolean> UIARangeValueIsReadOnly = from("UIARangeValueIsReadOnly", Boolean.class);
-	public static final Tag<Long> UIARangeValueLargeChange = from("UIARangeValueLargeChange", Long.class);
-	public static final Tag<Long> UIARangeValueMaximum = from("UIARangeValueMaximum", Long.class);
-	public static final Tag<Long> UIARangeValueMinimum = from("UIARangeValueMinimum", Long.class);
-	public static final Tag<Long> UIARangeValueSmallChange = from("UIARangeValueSmallChange", Long.class);
-	public static final Tag<Long> UIARangeValueValue = from("UIARangeValueValue", Long.class);
+	public static final Tag<Double> UIARangeValueLargeChange = from("UIARangeValueLargeChange", Double.class);
+	public static final Tag<Double> UIARangeValueMaximum = from("UIARangeValueMaximum", Double.class);
+	public static final Tag<Double> UIARangeValueMinimum = from("UIARangeValueMinimum", Double.class);
+	public static final Tag<Double> UIARangeValueSmallChange = from("UIARangeValueSmallChange", Double.class);
+	public static final Tag<Double> UIARangeValueValue = from("UIARangeValueValue", Double.class);
 
 	// selection control pattern
 	public static final Tag<Boolean> UIASelectionCanSelectMultiple = from("UIASelectionCanSelectMultiple", Boolean.class);
 	public static final Tag<Boolean> UIASelectionIsSelectionRequired = from("UIASelectionIsSelectionRequired", Boolean.class);
-	public static final Tag<Long> UIASelectionSelection = from("UIASelectionSelection", Long.class); // array
+	public static final Tag<Object> UIASelectionSelection = from("UIASelectionSelection", Object.class); // array
 
 	// selection item control pattern
 	public static final Tag<Boolean> UIASelectionItemIsSelected = from("UIASelectionItemIsSelected", Boolean.class);
@@ -728,8 +720,8 @@ public final class UIATags extends TagsBase {
 
 	// spreadsheet item control panel
 	public static final Tag<String> UIASpreadsheetItemFormula = from("UIASpreadsheetItemFormula", String.class);
-	public static final Tag<Long> UIASpreadsheetItemAnnotationObjects = from("UIASpreadsheetItemAnnotationObjects", Long.class); //array
-	public static final Tag<Long> UIASpreadsheetItemAnnotationTypes = from("UIASpreadsheetItemAnnotationTypes", Long.class); // array
+	public static final Tag<Object> UIASpreadsheetItemAnnotationObjects = from("UIASpreadsheetItemAnnotationObjects", Object.class); //array
+	public static final Tag<String> UIASpreadsheetItemAnnotationTypes = from("UIASpreadsheetItemAnnotationTypes", String.class); // array
 
 	// scroll pattern
 	public static final Tag<Boolean> UIAHorizontallyScrollable = from("UIAHorizontallyScrollable", Boolean.class);
@@ -754,8 +746,8 @@ public final class UIATags extends TagsBase {
 	public static final Tag<Long> UIATableRowOrColumnMajor = from("UIATableRowOrColumnMajor", Long.class);
 
 	// table item control panel
-	public static final Tag<Long> UIATableItemColumnHeaderItems = from("UIATableItemColumnHeaderItems", Long.class); // array
-	public static final Tag<Long> UIATableItemRowHeaderItems = from("UIATableItemRowHeaderItems", Long.class); //array
+	public static final Tag<Object> UIATableItemColumnHeaderItems = from("UIATableItemColumnHeaderItems", Object.class); // array
+	public static final Tag<Object> UIATableItemRowHeaderItems = from("UIATableItemRowHeaderItems", Object.class); //array
 
 	// toggle control pattern
 	public static final Tag<Long> UIAToggleToggleState = from("UIAToggleToggleState", Long.class);
@@ -767,9 +759,9 @@ public final class UIATags extends TagsBase {
 
 	//transform 2 pattern
 	public static final Tag<Boolean> UIATransform2CanZoom = from("UIATransform2CanZoom", Boolean.class);
-	public static final Tag<Long> UIATransform2ZoomLevel = from("UIATransform2ZoomLevel", Long.class);
-	public static final Tag<Long> UIATransform2ZoomMaximum = from("UIATransform2ZoomMaximum", Long.class);
-	public static final Tag<Long> UIATransform2ZoomMinimum = from("UIATransform2ZoomMinimum", Long.class);
+	public static final Tag<Double> UIATransform2ZoomLevel = from("UIATransform2ZoomLevel", Double.class);
+	public static final Tag<Double> UIATransform2ZoomMaximum = from("UIATransform2ZoomMaximum", Double.class);
+	public static final Tag<Double> UIATransform2ZoomMinimum = from("UIATransform2ZoomMinimum", Double.class);
 
 	// Value control pattern
 	public static final Tag<Boolean> UIAValueIsReadOnly = from("UIAValueIsReadOnly", Boolean.class);
@@ -820,7 +812,7 @@ public final class UIATags extends TagsBase {
 		}
 	};
 
-	public static Set<Tag<Boolean>> getPatternAvailabilityTags() {
+	static Set<Tag<Boolean>> getPatternAvailabilityTags() {
 		return patternAvailabilityTags;
 	}
 
@@ -834,7 +826,7 @@ public final class UIATags extends TagsBase {
 					add(UIAAnnotationAnnotationTypeName);
 					add(UIAAnnotationAuthor);
 					add(UIAAnnotationDateTime);
-					add(UIAnnotationTarget);
+					add(UIAAnnotationTarget);
 				}
 			});
 			put(UIAIsDockPatternAvailable, new HashSet<Tag<?>>() {
@@ -1092,7 +1084,7 @@ public final class UIATags extends TagsBase {
 			put(UIAAnnotationAnnotationTypeName, true);
 			put(UIAAnnotationAuthor, true);
 			put(UIAAnnotationDateTime, true);
-			put(UIAnnotationTarget, true);
+			put(UIAAnnotationTarget, true);
 			put(UIADockDockPosition, true);
 			put(UIADragDropEffect, true);
 			put(UIADragDropEffects, true);
