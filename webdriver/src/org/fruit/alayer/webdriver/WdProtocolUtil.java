@@ -99,4 +99,15 @@ public class WdProtocolUtil extends ProtocolUtil {
 	  AWTCanvas screenshot = WdScreenshot.fromScreenshot(rect);
 	  return screenshot;
   }
+
+  @Override
+  public AWTCanvas getWidgetshotBinary(Widget widget) {
+	  if(widget.get(Tags.Shape,null) == null)
+		  return null;
+
+	  Shape shape = widget.get(Tags.Shape);
+	  Rect rect = Rect.from((int) shape.x(), (int) shape.y(), (int) shape.width(), (int) shape.height());
+
+	  return WdScreenshot.fromScreenshot(rect);
+  }
 }

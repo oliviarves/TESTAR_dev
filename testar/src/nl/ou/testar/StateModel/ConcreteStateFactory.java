@@ -82,6 +82,8 @@ public abstract class ConcreteStateFactory {
             // get a screenshot for this widget
             ByteArrayOutputStream screenshotBytes = new ByteArrayOutputStream();
             ProtocolUtil protocolUtil = new ProtocolUtil();
+            if(NativeLinker.getPLATFORM_OS().contains(OperatingSystems.WEBDRIVER))
+            	protocolUtil = new WdProtocolUtil();
 
             AWTCanvas screenshot = protocolUtil.getWidgetshotBinary(testarWidget.child(i));
             try {
