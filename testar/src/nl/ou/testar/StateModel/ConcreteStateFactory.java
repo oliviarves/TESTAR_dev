@@ -78,6 +78,18 @@ public abstract class ConcreteStateFactory {
             stateModelWidget.addChild(newStateModelWidget);
             // recursively deal with the entire widget tree
             copyWidgetTreeStructure(testarChildWidget, newStateModelWidget, rootWidget);
+            
+            // get a screenshot for this widget
+            ByteArrayOutputStream screenshotBytes = new ByteArrayOutputStream();
+            ProtocolUtil protocolUtil = new ProtocolUtil();
+
+            AWTCanvas screenshot = protocolUtil.getWidgetshotBinary(testarWidget.child(i));
+            try {
+                screenshot.saveAsPng(screenshotBytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            newStateModelWidget.setScreenshot(screenshotBytes.toByteArray());
         }
     }
 

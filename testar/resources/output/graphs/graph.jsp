@@ -672,6 +672,24 @@
             popupAnchor.appendChild(nodeImage);
             contentPanel.appendChild(popupAnchor);
         }
+		
+		// add the screenshot image if the node is a widget
+        if (targetNode.hasClass("Widget")) {
+            // create a popup anchor
+            let popupAnchor = document.createElement("a");
+            popupAnchor.href = "${contentFolder}/" + targetNode.id() + ".png";
+            $(popupAnchor).magnificPopup(
+                {type: "image"}
+            );
+
+            // add the screenshot full image
+            let nodeImage = document.createElement("img");
+            nodeImage.alt = "Image for node " + targetNode.id();
+            nodeImage.src = "${contentFolder}/" + targetNode.id() + ".png";
+            nodeImage.classList.add("node-img-full");
+            popupAnchor.appendChild(nodeImage);
+            contentPanel.appendChild(popupAnchor);
+        }
 
         // add a series of screenshots if the node is an abstract state
         if (targetNode.hasClass("AbstractState")) {

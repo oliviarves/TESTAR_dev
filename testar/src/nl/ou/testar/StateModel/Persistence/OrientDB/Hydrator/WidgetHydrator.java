@@ -50,7 +50,12 @@ public class WidgetHydrator implements EntityHydrator<VertexEntity> {
             throw new HydrationException();
         }
         target.addPropertyValue(identifier.getPropertyName(), new PropertyValue(identifier.getPropertyType(), uniqueId));
-
+        
+        // add the screenshot
+        if (((Widget) source).getScreenshot() != null) {
+            target.addPropertyValue("screenshot", new PropertyValue(OType.BINARY, ((Widget) source).getScreenshot()));
+        }
+        
         // loop through the tagged attributes for this state and add them
         TaggableBase attributes = ((Widget) source).getAttributes();
         for (Tag<?> tag :attributes.tags()) {
