@@ -23,6 +23,9 @@ public class Widget {
     // for performance reasons, we store the root widget, so we do not have to climb up the widget tree
     // each time we need to access it
     ConcreteState rootWidget;
+    
+    // a byte array holding the screenshot for this widget
+    private byte[] screenshot;
 
     public Widget(String id) {
         this.id = id;
@@ -107,5 +110,21 @@ public class Widget {
      */
     public void setRootWidget(ConcreteState rootWidget) {
         this.rootWidget = rootWidget;
+    }
+    
+    /**
+     * Retrieves the screenshot data for this widget.
+     * @return
+     */
+    public byte[] getScreenshot() {
+        return screenshot;
+    }
+
+    /**
+     * Sets the screenshot data for this widget.
+     * @param screenshot
+     */
+    public void setScreenshot(byte[] screenshot) {
+        this.screenshot = screenshot;
     }
 }

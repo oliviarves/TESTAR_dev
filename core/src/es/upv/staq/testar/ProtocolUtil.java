@@ -288,4 +288,13 @@ public class ProtocolUtil {
 		return ScreenshotSerialiser.saveActionshot(state.get(Tags.ConcreteID), widget.get(Tags.ConcreteID), scrshot);
 	}
 	
+	public AWTCanvas getWidgetshotBinary(Widget widget) {
+		if(widget.get(Tags.Shape,null) == null)
+			return null;
+		
+		return AWTCanvas.fromScreenshot(Rect.from(widget.get(Tags.Shape).x(), widget.get(Tags.Shape).y(), 
+				widget.get(Tags.Shape).width(), widget.get(Tags.Shape).height()),
+				 AWTCanvas.StorageFormat.PNG, 1);
+	}
+	
 }
