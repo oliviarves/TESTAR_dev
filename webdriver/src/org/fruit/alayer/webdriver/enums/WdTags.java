@@ -55,8 +55,6 @@ public class WdTags extends TagsBase {
   public static final Tag<String> Desc = from("Desc", String.class);
 
   public static final Tag<String> WebTagName = from("WebTagName", String.class);
-  
-  public static final Tag<String> WebCssClasses = from("WebCssClasses", String.class);
 
   /**
    * Web identifier of a widget.

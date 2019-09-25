@@ -54,7 +54,7 @@ import static org.fruit.alayer.webdriver.Constants.scrollArrowSize;
 import static org.fruit.alayer.webdriver.Constants.scrollThick;
 
 
-public class Protocol_webdriver_statemodel extends DesktopProtocol {
+public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 	// Classes that are deemed clickable by the web framework
 	private static List<String> clickableClasses = Arrays.asList(
 			"v-menubar-menuitem", "v-menubar-menuitem-caption",
@@ -74,6 +74,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	private static List<String> slidesClasses = Arrays.asList(
 			"mat-slider" //Not working yet, customize these kind of actions
 			);
+	
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
 	private static List<String> deniedExtensions = Arrays.asList(
@@ -82,7 +83,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	// Define a whitelist of allowed domains for links and pages
 	// An empty list will be filled with the domain from the sut connector
 	// Set to null to ignore this feature
-	private static List<String> domainsAllowed = Arrays.asList("www.ou.nl", "10.101.0.222:8081");
+	private static List<String> domainsAllowed = Arrays.asList("10.101.0.222:8081");
 	//At the moment running MyThaiStar with ip domain (configure)
 
 	// If true, follow links opened in new tabs
