@@ -273,6 +273,9 @@
                 style: {
                     'background-color': '#e7298a',
                     'background-opacity': 0.8,
+					'background-image': function (ele) {
+                        return "${contentFolder}/" + ele.data('id') + ".png"
+                    },
                     'label' : 'data(customLabel)'
                 }
             },
