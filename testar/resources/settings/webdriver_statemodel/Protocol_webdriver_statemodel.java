@@ -40,9 +40,11 @@ import org.fruit.alayer.exceptions.StateBuildException;
 import org.fruit.alayer.exceptions.SystemStartException;
 import org.fruit.alayer.webdriver.*;
 import org.fruit.alayer.webdriver.enums.WdRoles;
+import org.fruit.alayer.webdriver.enums.WdTags;
 import org.fruit.monkey.ConfigTags;
 import org.fruit.monkey.Settings;
 import org.testar.protocols.DesktopProtocol;
+import org.testar.protocols.WebdriverProtocol;
 
 import java.util.*;
 
@@ -72,8 +74,6 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	private static List<String> slidesClasses = Arrays.asList(
 			"mat-slider" //Not working yet, customize these kind of actions
 			);
-	
-	
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
 	private static List<String> deniedExtensions = Arrays.asList(
@@ -82,8 +82,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	// Define a whitelist of allowed domains for links and pages
 	// An empty list will be filled with the domain from the sut connector
 	// Set to null to ignore this feature
-	private static List<String> domainsAllowed =
-			Arrays.asList("www.ou.nl", "10.101.0.222:8081");
+	private static List<String> domainsAllowed = Arrays.asList("www.ou.nl", "10.101.0.222:8081");
 	//At the moment running MyThaiStar with ip domain (configure)
 
 	// If true, follow links opened in new tabs
@@ -98,8 +97,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 
 	// List of atributes to identify and close policy popups
 	// Set to null to disable this feature
-	private static Map<String, String> policyAttributes = new HashMap<String, String>() {{ 
-		put("id", "_cookieDisplay_WAR_corpcookieportlet_okButton"); }};
+	private static Map<String, String> policyAttributes = null;
 
 	/**
 	 * Called once during the life time of TESTAR
@@ -132,6 +130,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 	 *
 	 * @return a started SUT, ready to be tested.
 	 */
+	@Override
 	protected SUT startSystem() throws SystemStartException {
 		SUT sut = super.startSystem();
 
@@ -423,10 +422,10 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 		}
 
 		// Widget must be completely visible on viewport for screenshots
-		return shape.x() >= 0 && shape.x() + shape.width() <= CanvasDimensions.getCanvasWidth() &&
-				shape.y() >= 0 && shape.y() + shape.height() <= CanvasDimensions.getInnerHeight();
+		return widget.get(WdTags.WebIsFullOnScreen, false);
 	}
 
+	@Override
 	protected boolean isClickable(Widget widget) {
 		Role role = widget.get(Tags.Role, Roles.Widget);
 		if (Role.isOneOf(role, NativeLinker.getNativeClickableRoles())) {
@@ -448,6 +447,7 @@ public class Protocol_webdriver_statemodel extends DesktopProtocol {
 		return clickSet.size() > 0;
 	}
 
+	@Override
 	protected boolean isTypeable(Widget widget) {
 		
 		WdElement element = ((WdWidget) widget).element;

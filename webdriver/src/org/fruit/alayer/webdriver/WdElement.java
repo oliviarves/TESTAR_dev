@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
- * Copyright (c) 2019 Open Universiteit - www.ou.nl
+/**
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ * Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -58,7 +58,7 @@ public class WdElement implements Serializable {
   long culture = 0L;
   boolean isModal = false; // i.c.w. access key
 
-  public String id, name, tagName, textContent, helpText;
+  public String id, name, tagName, textContent, helpText, title;
   public List<String> cssClasses = new ArrayList<>();
   public String display, type;
 
@@ -67,12 +67,13 @@ public class WdElement implements Serializable {
   boolean isContentElement, isControlElement;
   boolean hasKeyboardFocus, isKeyboardFocusable;
   String acceleratorKey, accessKey;
-  String valuePattern;
+  String valuePattern, href, value, style, target, alt;
 
   double zindex;
   Rect rect;
   boolean scrollPattern, hScroll, vScroll;
   public double hScrollViewSize, vScrollViewSize, hScrollPercent, vScrollPercent;
+  boolean isFullVisibleOnScreen;
 
   // Keep these here for fillScrollValues
   protected String overflowX, overflowY;
@@ -82,26 +83,42 @@ public class WdElement implements Serializable {
   public long scrollLeft, scrollTop;
   private long borderWidth, borderHeight;
 
-  public Map<String, String> attributeMap;
+  public transient Map<String, String> attributeMap;
 
   @SuppressWarnings("unchecked")
   public WdElement(Map<String, Object> packedElement,
-                   WdRootElement root, WdElement parent) {
+		  			WdRootElement root, WdElement parent) {
     this.root = root;
     this.parent = parent;
 
-    attributeMap = (Map<String, String>) packedElement.get("attributeMap");
+    try {
+    	attributeMap = (Map<String, String>) packedElement.get("attributeMap");
+    }catch(ClassCastException e) {
+    	System.out.println("-------------------------------------------------------------------------------------");
+    	System.out.println("- POSSIBLE KNOWN ERROR: We cannot access the current URL through Selenium WebDriver");
+    	System.out.println("- URL: " + WdDriver.getCurrentUrl());
+    	System.out.println("- INFO: https://github.com/TESTARtool/TESTAR_dev/issues/203");
+    	System.out.println("-------------------------------------------------------------------------------------");
+    	throw e;
+    }
 
     id = attributeMap.getOrDefault("id", "");
     name = (String) packedElement.get("name");
     tagName = (String) packedElement.get("tagName");
-    textContent = ((String) packedElement.get("textContent"))
-        .replaceAll("\\s+", " ").trim();
+    textContent = ((String) packedElement.get("textContent")).replaceAll("\\s+", " ").trim();
     helpText = attributeMap.get("title");
+    title = attributeMap.getOrDefault("title","");
+    
     valuePattern = attributeMap.getOrDefault("href", "");
     if (valuePattern == null || valuePattern.equals("")) {
       valuePattern = String.valueOf(packedElement.getOrDefault("value", ""));
     }
+    
+    href = attributeMap.getOrDefault("href", "");
+    value = String.valueOf(packedElement.getOrDefault("value", ""));
+    style = attributeMap.getOrDefault("style", "");
+    target = attributeMap.getOrDefault("target", "");
+    alt = attributeMap.getOrDefault("alt", "");
 
     String classesString = attributeMap.getOrDefault("class", "");
     if (classesString != null) {
@@ -113,6 +130,8 @@ public class WdElement implements Serializable {
     zindex = (double) (long) packedElement.get("zIndex");
     fillRect(packedElement);
     fillDimensions(packedElement);
+    
+    isFullVisibleOnScreen = isFullVisibleAtCanvasBrowser();
 
     blocked = (Boolean) packedElement.get("isBlocked");
     isClickable = (Boolean) packedElement.get("isClickable");
@@ -193,6 +212,11 @@ public class WdElement implements Serializable {
 
   public boolean visibleAt(double x, double y, boolean obscuredByChildFeature) {
     return visibleAt(x, y);
+  }
+  
+  private boolean isFullVisibleAtCanvasBrowser() {
+	  return rect.x() >= 0 && rect.x() + rect.width() <= CanvasDimensions.getCanvasWidth() &&
+	           rect.y() >= 0 && rect.y() + rect.height() <= CanvasDimensions.getInnerHeight();
   }
 
   @SuppressWarnings("unchecked")

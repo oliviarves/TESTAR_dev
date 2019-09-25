@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
- * Copyright (c) 2019 Open Universiteit - www.ou.nl
+/**
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ * Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -59,6 +59,7 @@ public class WdStateBuilder implements StateBuilder {
       return future.get((long) (timeOut), TimeUnit.SECONDS);
     }
     catch (InterruptedException | ExecutionException e) {
+    	e.printStackTrace();
       throw new StateBuildException(e.getMessage());
     }
     catch (TimeoutException e) {

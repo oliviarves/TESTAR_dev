@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
- * Copyright (c) 2019 Open Universiteit - www.ou.nl
+/**
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ * Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -28,10 +28,6 @@
  *
  */
 
-/*
- *  @author Sebastian Bauersfeld
- *  @author Urko Rueda (refactor from UIAStateBuilder)
- */
 package org.fruit.alayer.webdriver;
 
 import org.fruit.Util;
@@ -40,6 +36,9 @@ import org.fruit.alayer.SUT;
 import org.fruit.alayer.Tags;
 import org.fruit.alayer.Widget;
 import org.fruit.alayer.exceptions.StateBuildException;
+import org.fruit.alayer.webdriver.enums.WdRoles;
+
+import es.upv.staq.testar.StateManagementTags;
 
 import java.util.HashMap;
 import java.util.List;
@@ -111,6 +110,7 @@ public class WdStateFetcher implements Callable<WdState> {
     WdRootElement rootElement = buildRoot(system);
 
     if (rootElement == null) {
+      system.set(Tags.Desc, " ");
       return new WdState(null);
     }
 
@@ -145,8 +145,30 @@ public class WdStateFetcher implements Callable<WdState> {
 
     WdWidget w = parent.root().addChild(parent, element);
     element.backRef = w;
+    
+    setStateManagementTags(w, element);
+    
     for (WdElement child : element.children) {
       createWidgetTree(w, child);
     }
+  }
+  
+  private void setStateManagementTags(WdWidget widget, WdElement element) {
+	  widget.set(StateManagementTags.WidgetControlType, getValueOrDefault(WdRoles.fromTypeId(element.tagName).toString(),""));
+	  widget.set(StateManagementTags.WidgetIsEnabled, getValueOrDefault(element.enabled, false));
+	  widget.set(StateManagementTags.WidgetTitle, getValueOrDefault(element.name, ""));
+	  widget.set(StateManagementTags.WidgetHelpText, getValueOrDefault(element.helpText, ""));
+	  widget.set(StateManagementTags.WidgetClassName, getValueOrDefault(element.cssClasses.toString(), ""));
+	  widget.set(StateManagementTags.WidgetBoundary, getValueOrDefault(element.rect.toString(), ""));
+	  widget.set(StateManagementTags.WidgetValueValue, getValueOrDefault(element.valuePattern, ""));
+	  widget.set(StateManagementTags.WidgetIsOffscreen, getValueOrDefault(!element.isFullVisibleOnScreen, false));
+	  widget.set(StateManagementTags.WidgetIsContentElement, getValueOrDefault(element.isContentElement, false));
+	  widget.set(StateManagementTags.WidgetIsControlElement, getValueOrDefault(element.isControlElement, false));
+	  widget.set(StateManagementTags.WidgetAutomationId, getValueOrDefault(element.id, ""));
+	  widget.set(StateManagementTags.WidgetItemType, getValueOrDefault(element.type, ""));
+  }
+
+  private static <T> T getValueOrDefault(T value, T defaultValue) {
+	  return value == null ? defaultValue : value;
   }
 }

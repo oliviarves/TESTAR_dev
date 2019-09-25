@@ -1,6 +1,6 @@
-/*
- * Copyright (c) 2013, 2014, 2015, 2016, 2017 Universitat Politecnica de Valencia - www.upv.es
- * Copyright (c) 2019 Open Universiteit - www.ou.nl
+/**
+ * Copyright (c) 2018, 2019 Open Universiteit - www.ou.nl
+ * Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -86,6 +86,17 @@ public class WdProtocolUtil extends ProtocolUtil {
     Rect rect = Rect.from(
         actionArea.x, actionArea.y, actionArea.width + 1, actionArea.height + 1);
     AWTCanvas scrshot = WdScreenshot.fromScreenshot(rect);
-    return ScreenshotSerialiser.saveActionshot(state.get(Tags.ConcreteID), action.get(Tags.ConcreteID), scrshot);
+    return ScreenshotSerialiser.saveActionshot(state.get(Tags.ConcreteID, "NoConcreteIdAvailable"), action.get(Tags.ConcreteID, "NoConcreteIdAvailable"), scrshot);
+  }
+  
+  @Override
+  public AWTCanvas getStateshotBinary(State state) {
+	  double width = CanvasDimensions.getCanvasWidth() + (
+			  state.get(WdTags.WebVerticallyScrollable) ? scrollThick : 0);
+	  double height = CanvasDimensions.getCanvasHeight() + (
+			  state.get(WdTags.WebHorizontallyScrollable) ? scrollThick : 0);
+	  Rect rect = Rect.from(0, 0, width, height);
+	  AWTCanvas screenshot = WdScreenshot.fromScreenshot(rect);
+	  return screenshot;
   }
 }
