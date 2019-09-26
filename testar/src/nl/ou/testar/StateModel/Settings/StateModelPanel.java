@@ -1,6 +1,7 @@
 /***************************************************************************************************
 *
 * Copyright (c) 2017, 2018, 2019 Open Universiteit - www.ou.nl
+* Copyright (c) 2019 Universitat Politecnica de Valencia - www.upv.es
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -90,6 +91,9 @@ public class StateModelPanel extends JPanel {
     private JButton stateTagsButton = new JButton("Advanced");
     private AbstractStateSettings stateTagsDialog;
     private JButton analysisButton = new JButton("Analysis");
+    private JDialog analysisDialog;
+    private JButton exportDBbutton = new JButton("Export DB");
+    private JButton importDBbutton = new JButton("Import DB");
     private Tag<?>[] allStateManagementTags;
     private Tag<?>[] selectedStateManagementTags;
 
@@ -132,6 +136,8 @@ public class StateModelPanel extends JPanel {
         components.add(stateTagsButton);
         components.add(actionSelectionBox);
         components.add(stateModelWidgetStoreChkBox);
+        components.add(exportDBbutton);
+        components.add(importDBbutton);
 
         // add the components to the panel
         setLayout(null);
@@ -245,6 +251,28 @@ public class StateModelPanel extends JPanel {
 
         label14.setBounds(330, 280, 300, 27);
         add(label14);
+        
+        exportDBbutton.setBounds(330, 285, 150, 27);
+        exportDBbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	ExportDatabaseDialog exportDBdialog = new ExportDatabaseDialog(
+            			dataStoreTypeBox.getSelectedItem().toString(), dataStoreServerTextfield.getText());
+            	exportDBdialog.setVisible(true);
+            }
+        });
+        add(exportDBbutton);
+        
+        importDBbutton.setBounds(330, 320, 150, 27);
+        importDBbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	ImportDatabaseDialog importDBdialog = new ImportDatabaseDialog(
+            			dataStoreTypeBox.getSelectedItem().toString(), dataStoreServerTextfield.getText());
+            	importDBdialog.setVisible(true);
+            }
+        });
+        add(importDBbutton);
 
     }
 
