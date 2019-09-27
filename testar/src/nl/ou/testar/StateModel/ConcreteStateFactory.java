@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.Set;
 
 public abstract class ConcreteStateFactory {
+	
+	private static ProtocolUtil protocolUtil = new ProtocolUtil();
 
     /**
      * This builder method will create a new concrete state class and populate it with the needed data
@@ -24,6 +26,9 @@ public abstract class ConcreteStateFactory {
         String concreteStateId = newState.get(Tags.ConcreteIDCustom);
         ConcreteState concreteState = new ConcreteState(concreteStateId, tags, abstractState);
 
+        if(NativeLinker.getPLATFORM_OS().contains(OperatingSystems.WEBDRIVER))
+        	protocolUtil = new WdProtocolUtil();
+        
         // next we want to add all the attributes contained in the state, and then do the same thing for the child widgets
         setAttributes(concreteState, newState);
         if (storeWidgets) {
@@ -32,10 +37,6 @@ public abstract class ConcreteStateFactory {
 
         // get a screenshot for this concrete state
         ByteArrayOutputStream screenshotBytes = new ByteArrayOutputStream();
-        ProtocolUtil protocolUtil = new ProtocolUtil();
-        
-        if(NativeLinker.getPLATFORM_OS().contains(OperatingSystems.WEBDRIVER))
-        	protocolUtil = new WdProtocolUtil();
         
         AWTCanvas screenshot = protocolUtil.getStateshotBinary(newState);
         try {
@@ -81,9 +82,6 @@ public abstract class ConcreteStateFactory {
             
             // get a screenshot for this widget
             ByteArrayOutputStream screenshotBytes = new ByteArrayOutputStream();
-            ProtocolUtil protocolUtil = new ProtocolUtil();
-            if(NativeLinker.getPLATFORM_OS().contains(OperatingSystems.WEBDRIVER))
-            	protocolUtil = new WdProtocolUtil();
 
             AWTCanvas screenshot = protocolUtil.getWidgetshotBinary(testarWidget.child(i));
             try {
