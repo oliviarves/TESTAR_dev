@@ -57,7 +57,17 @@ import static org.fruit.alayer.webdriver.Constants.scrollThick;
 public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 	// Classes that are deemed clickable by the web framework
 	private static List<String> clickableClasses = Arrays.asList(
-			"v-menubar-menuitem", "v-menubar-menuitem-caption");
+			// Dropdown op top right
+			"selectItemLiteText",
+			// Menu items on the left
+			"etreeCell", "etreeCellSelected", "etreeCellSelectedOver",
+			// Checkboxes
+			"checkboxFalse", "checkboxFalseOver", "checkboxTrue", "checkboxTrueOver",
+			// Tiles
+			"showcaseTileIcon",
+			// Scrolling stuff
+			"vScrollStart", "vScrollEnd"
+			);
 
 	// Disallow links and pages with these extensions
 	// Set to null to ignore this feature
@@ -67,7 +77,8 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 	// Define a whitelist of allowed domains for links and pages
 	// An empty list will be filled with the domain from the sut connector
 	// Set to null to ignore this feature
-	private static List<String> domainsAllowed = Arrays.asList("www.w3schools.com");
+	private static List<String> domainsAllowed =
+			Arrays.asList("www.smartclient.com", "www.w3schools.com");
 
 	// If true, follow links opened in new tabs
 	// If false, stay with the original (ignore links opened in new tabs)
@@ -81,8 +92,8 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 
 	// List of atributes to identify and close policy popups
 	// Set to null to disable this feature
-	private static Map<String, String> policyAttributes = new HashMap<String, String>() {{ 
-		put("id", "sncmp-banner-btn-agree"); }};
+	private static Map<String, String> policyAttributes = new HashMap<String, String>() 
+	{{ put("class", "iAgreeButton"); }};
 
 	/**
 	 * Called once during the life time of TESTAR
