@@ -80,8 +80,19 @@ public class WdDriver extends SUTBase {
   private final Mouse mouse = WdMouse.build();
 
   private WdDriver(String sutConnector) {
+	
     String[] parts = sutConnector.split(" ");
+    
     String driverPath = parts[0].replace("\"", "");
+
+    String osName = System.getProperty("os.name");
+    if(!driverPath.contains(".exe") && osName.contains("Windows")) {
+    	driverPath = sutConnector.substring(0, sutConnector.indexOf(".exe")+4);
+    	driverPath = driverPath.replace("\"", "");
+    	parts = sutConnector.substring(sutConnector.indexOf(".exe")).split(" ");
+    	parts[0] = driverPath;
+    }
+    
     String url = parts[parts.length - 1].replace("\"", "");
     Dimension screenDimensions = null;
     Point screenPosition = null;
@@ -89,10 +100,10 @@ public class WdDriver extends SUTBase {
       String tmp = parts[1].replace("\"", "").toLowerCase();
       String[] dims = tmp.split("\\+")[0].split("x");
       screenDimensions =
-          new Dimension(Integer.valueOf(dims[0]), Integer.valueOf(dims[1]));
+          new Dimension(Integer.parseInt(dims[0]), Integer.parseInt(dims[1]));
       try {
-        screenPosition = new Point(Integer.valueOf(tmp.split("\\+")[1]),
-            Integer.valueOf(tmp.split("\\+")[2]));
+        screenPosition = new Point(Integer.parseInt(tmp.split("\\+")[1]),
+            Integer.parseInt(tmp.split("\\+")[2]));
       }
       catch (ArrayIndexOutOfBoundsException aioobe) {
 
@@ -111,6 +122,17 @@ public class WdDriver extends SUTBase {
       webDriver = startEdgeDriver(driverPath, extensionPath);
     }
     else {
+		String msg = " \n ******** Not a valid webdriver Exception ********"
+				+ "\n Something looks wrong with the webdriver path: \n "
+				+ sutConnector
+				+ "\n Allowed webdrivers: chromedriver.exe"
+				+ "\n Readed path: " + driverPath
+				+ "\n Verify if it exists or if the path is a correct definition. "
+				+ "\n Please follow this structure (spaces, quotes, characters...):"
+				+ "\n \"C:\\Windows\\chromedriver.exe\" \"1920x900+0+0\" \"https://www.testar.org\" \n";
+
+		System.out.println(msg);
+    	
       throw new SystemStartException("Not a valid webdriver");
     }
 
