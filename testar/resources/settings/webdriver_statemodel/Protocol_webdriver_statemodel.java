@@ -160,6 +160,10 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 		// create an action compiler, which helps us create actions
 		// such as clicks, drag&drop, typing ...
 		StdActionCompiler ac = new AnnotatingActionCompiler();
+		
+		loginMyThaiStarAction("user", "password", actions, state, ac);
+		
+		registerMyThaiStarAction("email", "password", actions, state, ac);
 
 		// Check if forced actions are needed to stay within allowed domains
 		Set<Action> forcedActions = detectForcedActions(state, ac);
@@ -518,6 +522,79 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 			retAction = super.selectAction(state, actions);
 		}
 		return retAction;
+	}
+	
+	//Method to customize login action
+	private void loginMyThaiStarAction(String username, String userPass, Set<Action> actions, State state, StdActionCompiler ac) {
+		Action typeUsername = new NOP();
+		Action typePassword = new NOP();
+		Action clickLogin = new NOP();
+
+		for(Widget w : state) {
+			if(w.get(WdTags.WebName,"").equals("Username *")) {
+				typeUsername = ac.clickTypeInto(w, username, true);
+			}
+			if(w.get(WdTags.WebName,"").equals("Password *")) {
+				typePassword = ac.clickTypeInto(w, userPass, true);
+			}
+			if(w.get(WdTags.WebName,"").equals("Login")) {
+				clickLogin = ac.leftClickAt(w);
+			}
+		}
+
+		String NOP_ID = "No Operation";
+		
+		if(!typeUsername.toString().contains(NOP_ID) && !typePassword.toString().contains(NOP_ID)
+				&& !clickLogin.toString().contains(NOP_ID)){
+			Action userLogin = new CompoundAction.Builder()
+					.add(typeUsername, 1)
+					.add(typePassword, 1)
+					.add(clickLogin, 1).build();
+			userLogin.set(Tags.OriginWidget, typeUsername.get(Tags.OriginWidget));
+			actions.add(userLogin);
+		}
+	}
+	
+	//Method to customize register action
+	private void registerMyThaiStarAction(String email, String emailPass, Set<Action> actions, State state, StdActionCompiler ac) {
+		Action typeEmail = new NOP();
+		Action typePassword = new NOP();
+		Action typeConfirmPassword = new NOP();
+		Action clickAcceptTerms = new NOP();
+		Action clickRegister = new NOP();
+		
+		for(Widget w : state) {
+			if(w.get(WdTags.WebName,"").equals("Email *")) {
+				typeEmail = ac.clickTypeInto(w, email, true);
+			}
+			if(w.get(WdTags.WebName,"").equals("Password *")) {
+				typePassword = ac.clickTypeInto(w, emailPass, true);
+			}
+			if(w.get(WdTags.WebName,"").equals("Confirm Password *")) {
+				typeConfirmPassword = ac.clickTypeInto(w, emailPass, true);
+			}
+			if(w.get(WdTags.WebName,"").equals("registerTerms")) {
+				clickAcceptTerms = ac.leftClickAt(w);
+			}
+			if(w.get(WdTags.WebName,"").equals("Register")) {
+				clickRegister = ac.leftClickAt(w);
+			}
+		}
+		
+		String NOP_ID = "No Operation";
+		
+		if(!typeEmail.toString().contains(NOP_ID) 
+				&& !typePassword.toString().contains(NOP_ID)&& !typeConfirmPassword.toString().contains(NOP_ID)
+				&& !clickAcceptTerms.toString().contains(NOP_ID) && !clickRegister.toString().contains(NOP_ID)){
+			Action userRegister = new CompoundAction.Builder()
+					.add(typeEmail, 1)
+					.add(typePassword, 1)
+					.add(typeConfirmPassword, 1)
+					.add(clickAcceptTerms, 1)
+					.add(clickRegister, 1).build();
+			userRegister.set(Tags.OriginWidget, typeEmail.get(Tags.OriginWidget));
+			actions.add(userRegister);
+		}
 	}
 
 }
