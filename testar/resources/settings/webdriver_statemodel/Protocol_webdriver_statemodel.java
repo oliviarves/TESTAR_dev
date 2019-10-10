@@ -35,6 +35,7 @@ import es.upv.staq.testar.protocols.ClickFilterLayerProtocol;
 import org.fruit.Pair;
 import org.fruit.alayer.*;
 import org.fruit.alayer.actions.*;
+import org.fruit.alayer.devices.KBKeys;
 import org.fruit.alayer.exceptions.ActionBuildException;
 import org.fruit.alayer.exceptions.StateBuildException;
 import org.fruit.alayer.exceptions.SystemStartException;
@@ -61,14 +62,19 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 			//Main page
 			"mat-button-ripple", "flag-icon", "mat-menu-ripple", "mat-icon", "mat-tab-label-content", //OK
 			//Menu page
-				"mat-checkbox-label",
-				//Sort by and options
-				"mat-select-placeholder", "mat-option-ripple" //OK
+			"mat-checkbox-label",
+			//Sort by and options
+			"mat-select-placeholder", "mat-option-ripple",
+			//Calendar
+			"owl-dt-calendar-cell-content" 
 			);
+	
+	private static List<String> alwaysClickableClasses = Arrays.asList("owl-dt-control-button-content");
 
 	private static List<String> typeableClasses = Arrays.asList(
 			//Text input of Menu page
-			"mat-input-element"//bookTable Page and Sign UP not detecting Email
+			"mat-input-element",//bookTable Page and Sign UP not detecting Email
+			"owl-dt-timer-input" //Calendar dates
 			);
 	
 	private static List<String> slidesClasses = Arrays.asList(
@@ -173,6 +179,11 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 
 		// iterate through all widgets
 		for (Widget widget : state) {
+			// left clicks, but ignore links outside domain
+			if (isAlwaysClickable(widget)) {
+				actions.add(ac.leftClickAt(widget));
+			}
+
 			// only consider enabled and non-tabu widgets
 			if (!widget.get(Enabled, true) || blackListed(widget)) {
 				continue;
@@ -462,6 +473,13 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 		clickSet.retainAll(element.cssClasses);
 		return clickSet.size() > 0;
 	}
+	
+	protected boolean isAlwaysClickable(Widget widget) {
+		WdElement element = ((WdWidget) widget).element;
+		Set<String> clickSet = new HashSet<>(alwaysClickableClasses);
+		clickSet.retainAll(element.cssClasses);
+		return clickSet.size() > 0;
+	}
 
 	@Override
 	protected boolean isTypeable(Widget widget) {
@@ -528,28 +546,23 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 	private void loginMyThaiStarAction(String username, String userPass, Set<Action> actions, State state, StdActionCompiler ac) {
 		Action typeUsername = new NOP();
 		Action typePassword = new NOP();
-		Action clickLogin = new NOP();
 
 		for(Widget w : state) {
-			if(w.get(WdTags.WebName,"").equals("Username *")) {
+			if(w.get(WdTags.WebName,"").equals("username")) {
 				typeUsername = ac.clickTypeInto(w, username, true);
 			}
-			if(w.get(WdTags.WebName,"").equals("Password *")) {
+			if(w.get(WdTags.WebName,"").equals("password")) {
 				typePassword = ac.clickTypeInto(w, userPass, true);
-			}
-			if(w.get(WdTags.WebName,"").equals("Login")) {
-				clickLogin = ac.leftClickAt(w);
 			}
 		}
 
 		String NOP_ID = "No Operation";
 		
-		if(!typeUsername.toString().contains(NOP_ID) && !typePassword.toString().contains(NOP_ID)
-				&& !clickLogin.toString().contains(NOP_ID)){
+		if(!typeUsername.toString().contains(NOP_ID) && !typePassword.toString().contains(NOP_ID)){
 			Action userLogin = new CompoundAction.Builder()
 					.add(typeUsername, 1)
 					.add(typePassword, 1)
-					.add(clickLogin, 1).build();
+					.add(new KeyDown(KBKeys.VK_ENTER),0.5).build();
 			userLogin.set(Tags.OriginWidget, typeUsername.get(Tags.OriginWidget));
 			actions.add(userLogin);
 		}
@@ -561,23 +574,19 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 		Action typePassword = new NOP();
 		Action typeConfirmPassword = new NOP();
 		Action clickAcceptTerms = new NOP();
-		Action clickRegister = new NOP();
 		
 		for(Widget w : state) {
-			if(w.get(WdTags.WebName,"").equals("Email *")) {
+			if(w.get(WdTags.WebName,"").equals("email")) {
 				typeEmail = ac.clickTypeInto(w, email, true);
 			}
-			if(w.get(WdTags.WebName,"").equals("Password *")) {
+			if(w.get(WdTags.WebName,"").equals("password")) {
 				typePassword = ac.clickTypeInto(w, emailPass, true);
 			}
-			if(w.get(WdTags.WebName,"").equals("Confirm Password *")) {
+			if(w.get(WdTags.WebName,"").equals("confirmPassword")) {
 				typeConfirmPassword = ac.clickTypeInto(w, emailPass, true);
 			}
 			if(w.get(WdTags.WebName,"").equals("registerTerms")) {
 				clickAcceptTerms = ac.leftClickAt(w);
-			}
-			if(w.get(WdTags.WebName,"").equals("Register")) {
-				clickRegister = ac.leftClickAt(w);
 			}
 		}
 		
@@ -585,13 +594,13 @@ public class Protocol_webdriver_statemodel extends WebdriverProtocol {
 		
 		if(!typeEmail.toString().contains(NOP_ID) 
 				&& !typePassword.toString().contains(NOP_ID)&& !typeConfirmPassword.toString().contains(NOP_ID)
-				&& !clickAcceptTerms.toString().contains(NOP_ID) && !clickRegister.toString().contains(NOP_ID)){
+				&& !clickAcceptTerms.toString().contains(NOP_ID)){
 			Action userRegister = new CompoundAction.Builder()
 					.add(typeEmail, 1)
 					.add(typePassword, 1)
 					.add(typeConfirmPassword, 1)
 					.add(clickAcceptTerms, 1)
-					.add(clickRegister, 1).build();
+					.add(new KeyDown(KBKeys.VK_ENTER),0.5).build();
 			userRegister.set(Tags.OriginWidget, typeEmail.get(Tags.OriginWidget));
 			actions.add(userRegister);
 		}

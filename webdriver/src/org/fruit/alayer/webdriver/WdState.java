@@ -175,7 +175,7 @@ public final class WdState extends WdWidget implements State {
 			ret = w == this ? ((WdRootElement) element).hasStandardMouse : null;
 		}
 		else if (t.equals(WdTags.WebName)) {
-			ret = w.element.name;
+			ret = w.element.webname;
 		}
 		else if (t.equals(WdTags.WebOrientation)) {
 			ret = (long)0;
