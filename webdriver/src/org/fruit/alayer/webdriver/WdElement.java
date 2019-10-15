@@ -54,6 +54,7 @@ public class WdElement extends TaggableBase implements Serializable {
   WdElement parent;
   WdRootElement root;
   WdWidget backRef;
+  Rect iframeContainer;
 
   public boolean blocked;
   long culture = 0L;
@@ -144,18 +145,30 @@ public class WdElement extends TaggableBase implements Serializable {
       enabled = false;
     }
 
-    List<Map<String, Object>> wrappedChildren =
-        (List<Map<String, Object>>) packedElement.get("wrappedChildren");
-    for (Map<String, Object> wrappedChild : wrappedChildren) {
-      WdElement child = new WdElement(wrappedChild, root, this);
-      if (!Constants.hiddenTags.contains(child.tagName) &&
-          !Constants.ignoredTags.contains(child.tagName)) {
-        children.add(child);
-      }
-    }
+   childElementTree(packedElement);
 
     setName();
     fillScrollValues();
+  }
+  
+  protected void childElementTree(Map<String, Object> packedElement) {
+	  List<Map<String, Object>> wrappedChildren =
+			  (List<Map<String, Object>>) packedElement.get("wrappedChildren");
+	  for (Map<String, Object> wrappedChild : wrappedChildren) {
+		  WdElement child = new WdElement(wrappedChild, root, this);
+		  if (!Constants.hiddenTags.contains(child.tagName) &&
+				  !Constants.ignoredTags.contains(child.tagName)) {
+			  children.add(child);
+
+			  //Add iframe elements into the main Element tree
+			  if(child.tagName.contains("iframe") && !child.id.isEmpty() 
+					  && !WdStateFetcher.foundIframes.contains(child.id)) {
+				  obtainIframeElement(child.id, child.rect);
+			  }
+
+		  } 
+	  }
+
   }
 
   private void writeObject(ObjectOutputStream oos) throws IOException {
@@ -224,7 +237,7 @@ public class WdElement extends TaggableBase implements Serializable {
   /*
    * This gets the position relative to the viewport
    */
-  private void fillRect(Map<String, Object> packedElement) {
+  protected void fillRect(Map<String, Object> packedElement) {
     List<Long> rect = (List<Long>) packedElement.get("rect");
     this.rect = Rect.from(rect.get(0), rect.get(1), rect.get(2), rect.get(3));
   }
@@ -254,4 +267,24 @@ public class WdElement extends TaggableBase implements Serializable {
 	  
 	  return (long)o;
   }
+  
+  private void obtainIframeElement(String iframeID, Rect rect) {
+	  WdStateFetcher.foundIframes.add(iframeID);
+	  
+	  this.iframeContainer = rect;
+
+	  WdDriver.switchToIframeID(iframeID);
+
+	  Object result = WdDriver.executeScript("return getStateTreeTestar(arguments[0])", Constants.ignoredTags);
+	  Map<String, Object> newPackedBody;
+	  if (result instanceof Map) {
+		  newPackedBody = (Map<String, Object>) result;
+		  WdElement iframeChild = new WdElementIFrame(newPackedBody, root, this);
+		  children.add(iframeChild);
+	  }
+
+	  WdDriver.switchToMainWindows();
+
+  }
+  
 }

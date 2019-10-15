@@ -75,6 +75,7 @@ public class WdDriver extends SUTBase {
   private static RemoteWebDriver webDriver = null;
   private static List<String> windowHandles = new ArrayList<>();
   public static boolean followLinks = true;
+  private static boolean activateSwitchTo = true;
 
   private final Keyboard kbd = AWTKeyboard.build();
   private final Mouse mouse = WdMouse.build();
@@ -404,7 +405,7 @@ public class WdDriver extends SUTBase {
     updateHandlesList();
 
     // Nothing to activate
-    if (windowHandles.size() < 1) {
+    if (windowHandles.size() < 1 || !activateSwitchTo) {
       return;
     }
 
@@ -478,4 +479,20 @@ public class WdDriver extends SUTBase {
 
     }
   }
+  
+  public static void switchToIframeID(String id) {
+	  activateSwitchTo = false;
+	  try {
+		  webDriver.switchTo().parentFrame();
+		  webDriver.switchTo().frame(id);
+	  } catch (NullPointerException | WebDriverException ignored) { }
+  }
+  
+  public static void switchToMainWindows() {
+	  activateSwitchTo = true;
+	  try {
+		  webDriver.switchTo().parentFrame();
+	  } catch (NullPointerException | WebDriverException ignored) { }
+  }
+  
 }

@@ -36,6 +36,8 @@ import org.fruit.alayer.SUT;
 import org.fruit.alayer.Tags;
 import org.fruit.alayer.Widget;
 import org.fruit.alayer.exceptions.StateBuildException;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,8 @@ import java.util.concurrent.Callable;
 
 public class WdStateFetcher implements Callable<WdState> {
   private final SUT system;
+  
+  protected static List<String> foundIframes = new ArrayList<>();
 
   public WdStateFetcher(SUT system) {
     this.system = system;
@@ -73,6 +77,8 @@ public class WdStateFetcher implements Callable<WdState> {
     wdRoot.hasStandardKeyboard = system.get(Tags.StandardKeyboard, null) != null;
     wdRoot.hasStandardMouse = system.get(Tags.StandardMouse, null) != null;
     wdRoot.pid = system.get(Tags.PID);
+    
+    foundIframes.clear();
 
     return wdRoot;
   }
