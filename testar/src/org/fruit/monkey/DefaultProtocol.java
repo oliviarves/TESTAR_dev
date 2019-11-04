@@ -816,6 +816,10 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 			//Deriving actions from the state:
 			Set<Action> actions = deriveActions(system, state);
 			CodingManager.buildIDs(state, actions);
+			for(Action a : actions)
+				if(a.get(Tags.AbstractIDCustom, null) == null)
+					CodingManager.buildEnvironmentActionIDs(state, a);
+			
 			// notify to state model the current state
 			stateModelManager.notifyNewStateReached(state, actions);
 
@@ -828,7 +832,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 				//----------------------------------
 				// if we did not find any actions, then we just hit escape, maybe that works ;-)
 				Action escAction = new AnnotatingActionCompiler().hitKey(KBKeys.VK_ESCAPE);
-				CodingManager.buildIDs(state, escAction);
+				CodingManager.buildEnvironmentActionIDs(state, escAction);
 				actions.add(escAction);
 				escAttempts++;
 			} else
@@ -863,6 +867,10 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 		// notify to state model the last state
 		Set<Action> actions = deriveActions(system, state);
 		CodingManager.buildIDs(state, actions);
+		for(Action a : actions)
+			if(a.get(Tags.AbstractIDCustom, null) == null)
+				CodingManager.buildEnvironmentActionIDs(state, a);
+		
 		stateModelManager.notifyNewStateReached(state, actions);
 
 		return getVerdict(state);
@@ -1091,7 +1099,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 				//----------------------------------
 				// if we did not find any actions, then we just hit escape, maybe that works ;-)
 				Action escAction = new AnnotatingActionCompiler().hitKey(KBKeys.VK_ESCAPE);
-				CodingManager.buildIDs(state, escAction);
+				CodingManager.buildEnvironmentActionIDs(state, escAction);
 				actions.add(escAction);
 				escAttempts++;
 			} else
@@ -1384,7 +1392,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 
 			//Refresh the flash information, to avoid that SUT hide the information
 			int countTimeFlash = 0;
-			while(countTimeFlash<timeFlash) {
+			while(countTimeFlash<timeFlash && !sut.isRunning()) {
 				FlashFeedback.flash(printSutInfo, 2000);
 				countTimeFlash += 2000;
 			}
@@ -1673,7 +1681,7 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 			LogSerialiser.log("Forcing kill-process <" + this.forceKillProcess + "> action\n", LogSerialiser.LogLevel.Info);
 			Action a = KillProcess.byName(this.forceKillProcess, 0);
 			a.set(Tags.Desc, "Kill Process with name '" + this.forceKillProcess + "'");
-			CodingManager.buildIDs(state, a);
+			CodingManager.buildEnvironmentActionIDs(state, a);
 			this.forceKillProcess = null;
 			return a;
 		}
