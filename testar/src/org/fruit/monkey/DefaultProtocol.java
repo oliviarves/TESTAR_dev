@@ -1117,6 +1117,9 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 			if (actionStatus.isUserEventAction()) {
 
 				CodingManager.buildIDs(state, actionStatus.getAction());
+				
+				if(actionStatus.getAction().get(Tags.AbstractIDCustom, null) == null)
+					CodingManager.buildEnvironmentActionIDs(state, actionStatus.getAction());
 
 				//notify the state model manager of the executed action
 				stateModelManager.notifyActionExecution(actionStatus.getAction());
@@ -1984,8 +1987,12 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 	protected void waitUserActionLoop(Canvas cv, SUT system, State state, ActionStatus actionStatus){
 		while (mode() == Modes.Record && !actionStatus.isUserEventAction()){
 			if (userEvent != null){
-				actionStatus.setAction(mapUserEvent(state));
-				actionStatus.setUserEventAction((actionStatus.getAction() != null));
+				Action mapAction = mapUserEvent(state);
+				//Only set the Action if was found on widget tree map
+				if(mapAction!=null) {
+					actionStatus.setAction(mapAction);
+					actionStatus.setUserEventAction((actionStatus.getAction() != null));
+				}
 				userEvent = null;
 			}
 			synchronized(this){
@@ -1997,13 +2004,13 @@ public class DefaultProtocol extends RuntimeControlsProtocol {
 			cv.begin(); Util.clear(cv);
 
 			//In Record-mode, we activate the visualization with Shift+ArrowUP:
-			if(visualizationOn) SutVisualization.visualizeState(false, markParentWidget, mouse, protocolUtil, lastPrintParentsOf, cv,state);
+			/*if(visualizationOn)*/ SutVisualization.visualizeState(false, markParentWidget, mouse, protocolUtil, lastPrintParentsOf, cv,state);
 
 			Set<Action> actions = deriveActions(system,state);
 			CodingManager.buildIDs(state, actions);
 
 			//In Record-mode, we activate the visualization with Shift+ArrowUP:
-			if(visualizationOn) visualizeActions(cv, state, actions);
+			/*if(visualizationOn)*/ visualizeActions(cv, state, actions);
 
 			cv.end();
 		}
