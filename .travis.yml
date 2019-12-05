@@ -1,0 +1,11 @@
+language: java
+
+jobs:
+  fast_finish: true
+  include:
+  - jdk: openjdk8
+    script:
+    - ./gradlew test
+  - jdk: openjdk9
+    script:
+    - ./gradlew test
